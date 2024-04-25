@@ -3,3 +3,6 @@
 
 # Ignore macOS directory files
 .DS_Store
+
+# Ignore Python cache directory
+__pycache__/
