@@ -31,7 +31,7 @@ def calc_learning_rate (diam, L, T):
 
 def calc_utility (x, y, w):
 	"""
-	Calculate utility of request instance (x) for cache configuration instance (y) and (static) request weights (w).
+	Calculate utility of request instance (x) for cache configuration instance (y) and static file weights (w).
 	"""
 	return np.sum(w * x * y)
 
