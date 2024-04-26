@@ -45,7 +45,7 @@ def calc_gradient (x, w):
 
 def online_gradient_ascent (x, y, w, learning_rate):
 	"""
-	Perform the gradient ascent step of the Online Gradient Ascent algorithm.
+	Perform the gradient ascent step of the OGA algorithm - returned vector might be outside feasible solution set.
 	"""
 	return y + (learning_rate * calc_gradient(x, w))
 
