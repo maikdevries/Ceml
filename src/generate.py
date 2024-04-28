@@ -59,6 +59,34 @@ def random_Y (N, C):
 	return Y
 
 
+def calc_request_utility (X, W):
+	"""
+	Given a T-by-N request matrix X, calculate the total utility per request based on frequency.
+	"""
+
+	# Calculate the frequency for each file request in X
+	frequencies = np.sum(X, axis = 0)
+
+	# Calculate the utility gained in regard to file request frequencies
+	return W * frequencies
+
+
+def optimal_Y_hindsight (X, W, N, C):
+	"""
+	Given a T-by-N request matrix X, generate the best static caching configuration in hindsight.
+	"""
+	utility = calc_request_utility(X, W)
+
+	# Retrieve the indices of C files which result in the highest utility given their respective request frequencies
+	indices = np.argsort(utility)[-C:]
+
+	# Generate N-dimensional vector with the highest utility-earning files set to 1.0 (fully cached)
+	Y = zero_Y(N)
+	Y[indices] = 1.0
+
+	return Y
+
+
 def uniform_weights (N):
 	"""
 	Generate an N-dimensional boolean vector with each element set to True.
