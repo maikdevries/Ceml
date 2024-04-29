@@ -13,7 +13,7 @@ N = 1000
 C = 100
 
 # T-by-N matrix: at each timeslot t a single entry is set to True (file request)
-X = generate.random_X(T, N)
+X = generate.random_X_zipf(T, N)
 
 # N-dimensional vector: at each timeslot t all entries will sum up to at most C (cache configuration)
 Y = generate.random_Y(N, C)
