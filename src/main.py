@@ -30,14 +30,18 @@ if __name__ == '__main__':
 	# hindsight_utility = benchmark.calc_utility_hindsight(X, W, C)
 
 	# Retrieve lists of utility progression over time for various caching policies
-	(OGA_utility, hindsight_utility) = benchmark.compare_utility_OGA_hindsight(X, Y, W, T, N, C)
+	# (OGA_utility, hindsight_utility) = benchmark.compare_utility_OGA_hindsight(X, Y, W, T, N, C)
+	(OGA_utility, LRU_utility) = benchmark.compare_utility_OGA_LRU(X, Y, W, T, N, C)
 
 	sum_OGA = np.sum(OGA_utility)
-	sum_hindsight = np.sum(hindsight_utility)
+	# sum_hindsight = np.sum(hindsight_utility)
+	sum_LRU = np.sum(LRU_utility)
 
 	print('Utility accumulated by OGA policy:', sum_OGA)
-	print('Utility accumulated by best static cache configuration in hindsight:', sum_hindsight)
-	print('Regret achieved by OGA policy:', (sum_hindsight - sum_OGA))
+	# print('Utility accumulated by best static cache configuration in hindsight:', sum_hindsight)
+	# print('Regret achieved by OGA policy:', (sum_hindsight - sum_OGA))
+	print('Utility accumulated by LRU policy:', sum_LRU)
+	print('Regret achieved by LRU policy:', (sum_LRU - sum_OGA))
 
 	# Create moving average filter to smooth out strong variations in achieved utility (noise)
 	moving_average_filter = np.ones(50) / 50
@@ -47,8 +51,9 @@ if __name__ == '__main__':
 	fig.supxlabel('Timeslot')
 	fig.supylabel('Utility')
 
+	# ax.plot(np.convolve(hindsight_utility, moving_average_filter, mode = 'valid'), label = 'Hindsight')
+	ax.plot(np.convolve(LRU_utility, moving_average_filter, mode = 'valid'), label = 'LRU')
 	ax.plot(np.convolve(OGA_utility, moving_average_filter, mode = 'valid'), label = 'OGA')
-	ax.plot(np.convolve(hindsight_utility, moving_average_filter, mode = 'valid'), label = 'Hindsight')
 
 	plt.legend()
 	plt.show()
