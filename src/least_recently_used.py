@@ -1,5 +1,5 @@
+import numpy as np
 from collections import deque
-from numpy import argmax
 
 class LRU:
 	"""
@@ -13,13 +13,22 @@ class LRU:
 		self.cache = deque(maxlen = C)
 
 
+	def calc_utility (self, x, W):
+		"""
+		Calculate the utility of the current LRU cache configuration.
+		"""
+
+		# Return the sum of the utility weights of the files in the cache
+		return np.sum(W * x)
+
+
 	def update (self, x):
 		"""
 		Update the LRU cache configuration based on the given request vector (x).
 		"""
 
 		# Determine index of requested file in request vector (x)
-		index = argmax(x)
+		index = np.argmax(x)
 
 		# Append to end of cache if requested file is not in cache and return False (cache miss)
 		if index not in self.cache:
