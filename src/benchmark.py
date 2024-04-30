@@ -1,8 +1,8 @@
 import numpy as np
 
+import best_static_hindsight as BSH
 import online_gradient_ascent as OGA
 import least_recently_used as LRU
-import generate
 
 
 def compare_utility_OGA_LRU (X, Y, W, T, N, C):
@@ -40,14 +40,12 @@ def compare_utility_OGA_LRU (X, Y, W, T, N, C):
 
 def compare_utility_OGA_hindsight (X, Y, W, T, N, C):
 	"""
-	Given a T-by-N request matrix X, accumulate the utility of OGA and the best caching configuration in hindsight.
+	Given a T-by-N request matrix X, accumulate the utility of OGA and the best static caching configuration in hindsight.
 	"""
 	OGA_utility = []
 	hindsight_utility = []
 
-	Y_hindsight = generate.optimal_Y_hindsight(X, W, N, C)
-
-	for x in X:
+	for t, x in enumerate(X):
 
 		# Calculate the (possibly dynamic) learning rate for current request x
 		diam = OGA.calc_diam(N, C)
@@ -63,14 +61,28 @@ def compare_utility_OGA_hindsight (X, Y, W, T, N, C):
 		Y = OGA.project(z, N, C)
 
 		# Calculate the utility of the best caching configuration in hindsight
-		hindsight_utility.append(OGA.calc_utility(x, Y_hindsight, W))
+		hindsight_utility.append(BSH.calc_utility(X[:(t + 1)], W, C))
 
 	return (OGA_utility, hindsight_utility)
 
 
+def calc_utility_BSH (X, W, T, C):
+	"""
+	Given a T-by-N request matrix X, accumulate the utility of the best static caching configuration in hindsight.
+	"""
+	BSH_utility = []
+
+	for t in range(T):
+
+		# Calculate the utility sum of all requests in X up to and including timeslot t
+		BSH_utility.append(BSH.calc_utility(X[:(t + 1)], W, C))
+
+	return BSH_utility
+
+
 def calc_utility_OGA (X, Y, W, T, N, C):
 	"""
-	Given a T-by-N request matrix X, calculate the utility of the Online Gradient Ascent algorithm.
+	Given a T-by-N request matrix X, accumulate the utility of the online gradient ascent algorithm.
 	"""
 	OGA_utility = []
 
@@ -89,17 +101,4 @@ def calc_utility_OGA (X, Y, W, T, N, C):
 		z = OGA.online_gradient_ascent(x, Y, W, learning_rate)
 		Y = OGA.project(z, N, C)
 
-	return np.sum(OGA_utility)
-
-
-def calc_utility_hindsight (X, W, C):
-	"""
-	Given a T-by-N request matrix X, calculate the utility of the best caching configuration in hindsight.
-	"""
-	utility = generate.calc_request_utility(X, W)
-
-	# Retrieve the indices that would partition the array into the C highest utility-scoring files
-	indices = np.argpartition(utility, -C)[-C:]
-
-	# Sum up the utility of the C highest scoring files
-	return np.sum(utility[indices])
+	return OGA_utility
