@@ -25,34 +25,28 @@ W = generate.uniform_weights(N)
 # TODO: assert C is within range [0 .. N]
 if __name__ == '__main__':
 
-	# Calculate sum of utility for various caching policies
-	# OGA_utility = benchmark.calc_utility_OGA(X, Y, W, T, N, C)
-	# hindsight_utility = benchmark.calc_utility_hindsight(X, W, C)
-
 	# Retrieve lists of utility progression over time for various caching policies
-	# (OGA_utility, hindsight_utility) = benchmark.compare_utility_OGA_hindsight(X, Y, W, T, N, C)
-	(OGA_utility, LRU_utility) = benchmark.compare_utility_OGA_LRU(X, Y, W, T, N, C)
+	BSH_utility = benchmark.calc_utility_BSH(X, W, T, C)
+	OGA_utility = benchmark.calc_utility_OGA(X, Y, W, T, N, C)
 
-	sum_OGA = np.sum(OGA_utility)
-	# sum_hindsight = np.sum(hindsight_utility)
-	sum_LRU = np.sum(LRU_utility)
+	# TODO: return numpy array instead of list
+	BSH_utility = np.asarray(BSH_utility)
+	OGA_utility = np.asarray(OGA_utility)
 
-	print('Utility accumulated by OGA policy:', sum_OGA)
-	# print('Utility accumulated by best static cache configuration in hindsight:', sum_hindsight)
-	# print('Regret achieved by OGA policy:', (sum_hindsight - sum_OGA))
-	print('Utility accumulated by LRU policy:', sum_LRU)
-	print('Regret achieved by LRU policy:', (sum_LRU - sum_OGA))
+	print('Utility accumulated by BSH policy:', BSH_utility[-1])
+	print('Utility accumulated by OGA policy:', np.sum(OGA_utility))
+	print('Regret achieved by OGA policy:', (BSH_utility[-1] - np.sum(OGA_utility)))
 
 	# Create moving average filter to smooth out strong variations in achieved utility (noise)
 	moving_average_filter = np.ones(50) / 50
+	time_slots = np.arange(1, T + 1)
 
 	(fig, ax) = plt.subplots()
 	fig.suptitle(f'Average request utility over time [N = {N}, C = {C}]')
-	fig.supxlabel('Timeslot')
-	fig.supylabel('Utility')
+	fig.supxlabel('Time')
+	fig.supylabel('Average utility')
 
-	# ax.plot(np.convolve(hindsight_utility, moving_average_filter, mode = 'valid'), label = 'Hindsight')
-	ax.plot(np.convolve(LRU_utility, moving_average_filter, mode = 'valid'), label = 'LRU')
+	ax.plot(BSH_utility / time_slots, label = 'Hindsight')
 	ax.plot(np.convolve(OGA_utility, moving_average_filter, mode = 'valid'), label = 'OGA')
 
 	plt.legend()
