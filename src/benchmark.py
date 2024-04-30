@@ -12,7 +12,7 @@ def compare_utility_OGA_LRU (X, Y, W, T, N, C):
 	OGA_utility = []
 	LRU_utility = []
 
-	LRU_cache = LRU.LRU(C)
+	LRU_cache = LRU.construct(C)
 
 	for x in X:
 
@@ -30,7 +30,7 @@ def compare_utility_OGA_LRU (X, Y, W, T, N, C):
 		Y = OGA.project(z, N, C)
 
 		# Update LRU cache configuration and calculate utility based on whether current request x was a cache hit or miss
-		if LRU_cache.update(x):
+		if LRU.update(x, LRU_cache):
 			LRU_utility.append(np.sum(W * x))
 		else:
 			LRU_utility.append(0)
@@ -108,14 +108,14 @@ def calc_utility_LRU (X, W, C):
 	"""
 	Given a T-by-N request matrix X, accumulate the utility of the least recently used caching policy.
 	"""
-	LRU_cache = LRU.LRU(C)
+	LRU_cache = LRU.construct(C)
 	LRU_utility = []
 
 	for x in X:
 
 		# Update LRU cache configuration and calculate utility based on whether current request x was a cache hit or miss
-		if LRU_cache.update(x):
-			LRU_utility.append(LRU_cache.calc_utility(x, W))
+		if LRU.update(x, LRU_cache):
+			LRU_utility.append(LRU.calc_utility(x, W))
 		else:
 			LRU_utility.append(0)
 

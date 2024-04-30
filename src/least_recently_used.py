@@ -1,42 +1,36 @@
 import numpy as np
 from collections import deque
 
-class LRU:
+
+def construct (C):
 	"""
-	Class representing a Least Recently Used (LRU) cache configuration.
+	Construct a new LRU cache configuration with a given maximum size (C).
+	"""
+	return deque(maxlen = C)
+
+
+def update (x, y: deque):
+	"""
+	Update the LRU cache configuration (y) based on the given request vector (x).
 	"""
 
-	def __init__ (self, C):
-		"""
-		Construct a LRU cache configuration with a limited capacity C.
-		"""
-		self.cache = deque(maxlen = C)
+	# Determine index of requested file in request vector (x)
+	index = np.argmax(x)
+
+	# Append to end of cache if requested file is not in cache and return False (cache miss)
+	if index not in y:
+		y.append(index)
+		return False
+
+	# Remove requested file from cache and append to end of cache if requested file is in cache and return True (cache hit)
+	y.remove(index)
+	y.append(index)
+
+	return True
 
 
-	def calc_utility (self, x, W):
-		"""
-		Calculate the utility of the current LRU cache configuration.
-		"""
-
-		# Return the sum of the utility weights of the files in the cache
-		return np.sum(W * x)
-
-
-	def update (self, x):
-		"""
-		Update the LRU cache configuration based on the given request vector (x).
-		"""
-
-		# Determine index of requested file in request vector (x)
-		index = np.argmax(x)
-
-		# Append to end of cache if requested file is not in cache and return False (cache miss)
-		if index not in self.cache:
-			self.cache.append(index)
-			return False
-
-		# Remove requested file from cache and append to end of cache if requested file is in cache and return True (cache hit)
-		self.cache.remove(index)
-		self.cache.append(index)
-
-		return True
+def calc_utility (x, w):
+	"""
+	Calculate utility of request instance (x) and static file weights (w) in case of LRU cache hit.
+	"""
+	return np.sum(w * x)
