@@ -3,6 +3,12 @@ import cvxpy as cp
 import math
 
 
+# Define global variables for speed-up by reusing them in repeated instances of the minimisation problem
+feasible_vector = None
+unfeasible_vector = None
+minimisation_problem = None
+
+
 def calc_diam (N, C):
 	"""
 	Calculate the diameter of the feasible solution set (Y).
@@ -50,27 +56,47 @@ def online_gradient_ascent (x, y, w, learning_rate):
 	return y + (learning_rate * calc_gradient(x, w))
 
 
+def define_minimisation_problem (N, C):
+	"""
+	Instantiate global variables for minimisation problem such that they can be reused in repeated instances.
+	"""
+	global feasible_vector, unfeasible_vector, minimisation_problem
+
+	# Define N-dimensional non-negative feasible target vector which is to be closest to the unfeasible vector
+	feasible_vector = cp.Variable(N, nonneg = True)
+
+	# Define mutable parameter to be used in immutable minimisation problem
+	unfeasible_vector = cp.Parameter(N, nonneg = True)
+
+	# Define minimisation problem of squared Euclidean distance and constraints of the feasible solution set:
+	# A vector's elements should be in range [0 .. 1], and additionally the vector's elements should sum up to at most C.
+	minimisation_problem = cp.Problem(
+		cp.Minimize(cp.sum_squares(unfeasible_vector - feasible_vector)),
+		[
+			feasible_vector <= 1,
+			cp.sum(feasible_vector) <= C,
+		],
+	)
+
+
 # TODO: replace CVXPY abstraction with direct use of solver (?)
 def project (z, N, C):
 	"""
 	Project (unfeasible) vector (z) onto feasible solution set through minimisation of squared Euclidean distance.
 	"""
+	global feasible_vector, unfeasible_vector, minimisation_problem
 
-	# Define N-dimensional feasible target vector which is to be closest to (unfeasible) vector z
-	x = cp.Variable(N)
+	# Define global variables if not yet instantiated
+	if feasible_vector is None or unfeasible_vector is None or minimisation_problem is None:
+		define_minimisation_problem(N, C)
 
-	# Define minimisation problem of squared Euclidean distance and constraints of the feasible solution set:
-	# A vector's elements should be in range [0 .. 1], and additionally the vector's elements should sum up to at most C.
-	problem = cp.Problem(
-		cp.Minimize(cp.sum_squares(z - x)),
-		[
-			x >= 0,
-			x <= 1,
-			cp.sum(x) <= C,
-		],
-	)
+	assert feasible_vector is not None and unfeasible_vector is not None and minimisation_problem is not None
 
+	# Update unfeasible vector parameter with current (unfeasible) vector (z)
+	unfeasible_vector.value = z
+
+	# TODO: test different canonicalisation backends (CPP, SCIPY, NUMPY)
 	# TODO: test different solvers for speed and accuracy (CLARABEL, OSQP, ECOS, SCS)
-	problem.solve(solver = cp.CLARABEL)
+	minimisation_problem.solve(solver = cp.CLARABEL, enforce_dpp = True)
 
-	return x.value
+	return feasible_vector.value
