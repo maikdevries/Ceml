@@ -9,6 +9,13 @@ unfeasible_vector = None
 minimisation_problem = None
 
 
+def construct (N):
+	"""
+	Construct a new N-dimensional zero vector as OGA cache configuration.
+	"""
+	return np.zeros(N, dtype = np.float64)
+
+
 def calc_diam (N, C):
 	"""
 	Calculate the diameter of the feasible solution set (Y).
@@ -49,7 +56,7 @@ def calc_gradient (x, w):
 	return w * x
 
 
-def online_gradient_ascent (x, y, w, learning_rate):
+def update (x, y, w, learning_rate):
 	"""
 	Perform the gradient ascent step of the OGA algorithm - returned vector might be outside feasible solution set.
 	"""
