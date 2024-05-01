@@ -41,6 +41,21 @@ def random_X_zipf (T, N, alpha = 1.25):
 	return X
 
 
+def adversarial_X_round_robin (T, N):
+	"""
+	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random entry set to True in a round-robin fashion.
+	"""
+
+	# Generate T indices between 0 and N (exclusive) in a round-robin fashion
+	round_robin_indices = np.arange(T) % N
+
+	# Generate T-by-N zero matrix and set element of each vector at the corresponding round-robin index to True
+	X = zero_X(T, N)
+	X[np.arange(T), round_robin_indices] = True
+
+	return X
+
+
 def zero_Y (N):
 	"""
 	Generate an N-dimensional zero vector.
