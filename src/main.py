@@ -33,16 +33,22 @@ if __name__ == '__main__':
 	print(f'Utility accumulated by OGA policy: {OGA_utility[-1]}')
 	print(f'Regret achieved by OGA policy: {(BSH_utility[-1] - OGA_utility[-1])}')
 
-	(fig, ax) = plt.subplots()
+	(fig, (dist, util)) = plt.subplots(2, 1)
 	fig.suptitle(f'Average request utility over time [N = {N}, C = {C}, R = {R}]')
-	fig.supxlabel('Time')
-	fig.supylabel('Average utility')
+
+	dist.set_ylabel('Requested file')
+
+	util.set_ylabel('Average utility')
+	util.set_xlabel('Time')
+
+	# Plot the requested file at each time slot (request distribution)
+	dist.plot(np.argmax(X, axis = 1), '.', alpha = 0.5)
 
 	# Generate list of time slots to be used in deriving average utility per time slot
 	time_slots = np.arange(1, T + 1)
 
-	ax.plot((BSH_utility / time_slots), label = 'BSH')
-	ax.plot((OGA_utility / time_slots), label = 'OGA')
+	util.plot((BSH_utility / time_slots), label = 'BSH')
+	util.plot((OGA_utility / time_slots), label = 'OGA')
 
 	plt.legend()
 	plt.show()
