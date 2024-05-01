@@ -23,7 +23,7 @@ W = generate.uniform_weights(N)
 if __name__ == '__main__':
 
 	# Retrieve lists of utility progression over time for various caching policies
-	BSH_utility = benchmark.calc_utility_BSH(X, W, T, C)
+	BSH_utility = benchmark.calc_utility_BSH(X, W, C)
 	OGA_utility = benchmark.calc_utility_OGA(X, W, T, N, C)
 
 	print(f'Utility accumulated by BSH policy: {BSH_utility[-1]}')

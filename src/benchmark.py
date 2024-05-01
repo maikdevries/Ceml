@@ -5,18 +5,15 @@ import online_gradient_ascent as OGA
 import least_recently_used as LRU
 
 
-def calc_utility_BSH (X, W, T, C):
+def calc_utility_BSH (X, W, C):
 	"""
 	Given a T-by-N request matrix X, accumulate the utility of the best static caching configuration in hindsight.
 	"""
-	utility = []
 
-	for t in range(1, T + 1):
+	# Generate a T-by-N matrix where each row contains the file request frequency up to and including the current timeslot
+	frequencies = np.cumsum(X, axis = 0)
 
-		# Calculate the utility sum of all requests in X up to and including timeslot t
-		utility.append(BSH.calc_utility(X[:t], W, C))
-
-	return np.asarray(utility, dtype = np.float64)
+	return np.apply_along_axis(BSH.calc_utility, axis = 1, arr = frequencies, W = W, C = C)
 
 
 def calc_utility_OGA (X, W, T, N, C):
