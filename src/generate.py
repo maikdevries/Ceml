@@ -32,7 +32,7 @@ def random_X_zipf (T, N, alpha = 1.25):
 
 	# TODO: replace np.random function call with corresponding Generator instance (recommended implementation)
 	# Generate T random indices between 0 and N (exclusive) according to Zipf's law
-	random_indices = np.random.zipf(alpha, size = T) % N
+	random_indices = (np.random.zipf(alpha, size = T) - 1) % N
 
 	# Generate T-by-N zero matrix and set a random element of each vector to True
 	X = zero_X(T, N)
