@@ -41,22 +41,6 @@ def random_X_zipf (T, N, alpha = 1.25):
 	return X
 
 
-def random_bounded_X (T, N, B):
-	"""
-	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random entry in range [0 .. B] set to True.
-	"""
-
-	# TODO: replace np.random function call with corresponding Generator instance (recommended implementation)
-	# Generate T random indices between 0 and B (exclusive)
-	random_indices = np.random.randint(0, B, size = T)
-
-	# Generate T-by-N zero matrix and set random element of each vector to True
-	X = zero_X(T, N)
-	X[np.arange(T), random_indices] = True
-
-	return X
-
-
 def zero_Y (N):
 	"""
 	Generate an N-dimensional zero vector.
