@@ -16,7 +16,7 @@ def calc_utility_BSH (X, W, C):
 	return np.apply_along_axis(BSH.calc_utility, axis = 1, arr = frequencies, W = W, C = C)
 
 
-def calc_utility_OGA (X, W, T, N, C):
+def calc_utility_OGA (X, W, T, N, C, R = None):
 	"""
 	Given a T-by-N request matrix X, accumulate the utility of the online gradient ascent algorithm.
 	"""
@@ -26,16 +26,17 @@ def calc_utility_OGA (X, W, T, N, C):
 	for x in X:
 
 		# Calculate the (possibly dynamic) learning rate for current request x
-		diam = OGA.calc_diam(N, C)
-		L = OGA.calc_L(x, W)
-		learning_rate = OGA.calc_learning_rate(diam, L, T)
+		if R is None:
+			diam = OGA.calc_diam(N, C)
+			L = OGA.calc_L(x, W)
+			R = OGA.calc_learning_rate(diam, L, T)
 
 		# Calculate the utility of the current OGA cache configuration
 		utility.append(OGA.calc_utility(x, cache, W))
 
 		# TODO: avoid (costly) update of cache configuration on last request in X
 		# Update OGA cache configuration based on gradient of request and project back onto feasible solution set (constraints)
-		z = OGA.update(x, cache, W, learning_rate)
+		z = OGA.update(x, cache, W, R)
 		cache = OGA.project(z, N, C)
 
 	return np.asarray(utility, dtype = np.float64).cumsum()

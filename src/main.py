@@ -18,20 +18,23 @@ X = generate.random_X_zipf(T, N)
 # N-dimensional vector: static file-dependent utility vector (utility weights)
 W = generate.uniform_weights(N)
 
+# The learning rate for the online gradient ascent algorithm
+R = None
+
 
 # TODO: assert C is within range [0 .. N]
 if __name__ == '__main__':
 
 	# Retrieve lists of utility progression over time for various caching policies
 	BSH_utility = benchmark.calc_utility_BSH(X, W, C)
-	OGA_utility = benchmark.calc_utility_OGA(X, W, T, N, C)
+	OGA_utility = benchmark.calc_utility_OGA(X, W, T, N, C, R)
 
 	print(f'Utility accumulated by BSH policy: {BSH_utility[-1]}')
 	print(f'Utility accumulated by OGA policy: {OGA_utility[-1]}')
 	print(f'Regret achieved by OGA policy: {(BSH_utility[-1] - OGA_utility[-1])}')
 
 	(fig, ax) = plt.subplots()
-	fig.suptitle(f'Average request utility over time [N = {N}, C = {C}]')
+	fig.suptitle(f'Average request utility over time [N = {N}, C = {C}, R = {R}]')
 	fig.supxlabel('Time')
 	fig.supylabel('Average utility')
 
