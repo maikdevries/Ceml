@@ -36,13 +36,13 @@ if __name__ == '__main__':
 	(fig, (dist, util)) = plt.subplots(2, 1)
 	fig.suptitle(f'Average request utility over time [N = {N}, C = {C}, R = {R}]')
 
-	dist.set_ylabel('Requested file')
+	dist.set_ylabel('File requests')
 
 	util.set_ylabel('Average utility')
 	util.set_xlabel('Time')
 
-	# Plot the requested file at each time slot (request distribution)
-	dist.plot(np.argmax(X, axis = 1), '.', alpha = 0.5)
+	# Plot total number of requests per file over horizon T (request distribution)
+	dist.plot(np.sum(X, axis = 0))
 
 	# Generate list of time slots to be used in deriving average utility per time slot
 	time_slots = np.arange(1, T + 1)
