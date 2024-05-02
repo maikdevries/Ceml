@@ -13,7 +13,7 @@ N = 1000
 C = 100
 
 # T-by-N matrix: at each timeslot t a single entry is set to True (file request)
-X = generate.random_X_zipf(T, N)
+X = generate.random_X_zipfian(T, N, alpha = 0.8)
 
 # N-dimensional vector: static file-dependent utility vector (utility weights)
 W = generate.uniform_weights(N)
