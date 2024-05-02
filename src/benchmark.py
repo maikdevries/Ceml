@@ -16,7 +16,7 @@ def calc_utility_BSH (X, W, C):
 	return np.apply_along_axis(BSH.calc_utility, axis = 1, arr = frequencies, W = W, C = C)
 
 
-def calc_utility_OGA (X, W, T, N, C, R = None):
+def calc_utility_OGA (X, W, T, N, C, R):
 	"""
 	Given a T-by-N request matrix X, accumulate the utility of the online gradient ascent algorithm.
 	"""
@@ -25,8 +25,8 @@ def calc_utility_OGA (X, W, T, N, C, R = None):
 
 	for x in X:
 
-		# Calculate the (possibly dynamic) learning rate for current request x
-		if R is None:
+		# Calculate dynamic learning rate for current request x if not provided
+		if not R:
 			diam = OGA.calc_diam(N, C)
 			L = OGA.calc_L(x, W)
 			R = OGA.calc_learning_rate(diam, L, T)
