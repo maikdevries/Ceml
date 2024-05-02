@@ -46,13 +46,14 @@ def random_X_zipfian (T, N, alpha = 0.8):
 	return X
 
 
-def adversarial_X_round_robin (T, N):
+# TODO: assert B is within range [0 .. N]
+def adversarial_X_round_robin (T, N, B):
 	"""
 	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random entry set to True in a round-robin fashion.
 	"""
 
-	# Generate T indices between 0 and N (exclusive) in a round-robin fashion
-	round_robin_indices = np.arange(T) % N
+	# Generate T indices between 0 and B (exclusive) in a round-robin fashion
+	round_robin_indices = np.arange(T) % B
 
 	# Generate T-by-N zero matrix and set element of each vector at the corresponding round-robin index to True
 	X = zero_X(T, N)
