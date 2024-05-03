@@ -1,3 +1,4 @@
+import concurrent.futures
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -25,10 +26,15 @@ R = [0.05, 0.1, 0.3, 0.5, 0.7, 1.0]
 # TODO: assert C is within range [0 .. N]
 if __name__ == '__main__':
 
-	# Retrieve lists of utility progression over time for various caching policies
-	BSH_utility = benchmark.calc_utility_BSH(X, W, C)
-	LRU_utility = benchmark.calc_utility_LRU(X, W, C)
-	OGA_utilities = [benchmark.calc_utility_OGA(X, W, T, N, C, r) for r in R]
+	# Calculate in parallel the utility progression over time for various caching policies
+	with concurrent.futures.ProcessPoolExecutor() as executor:
+		BSH_future = executor.submit(benchmark.calc_utility_BSH, X, W, C)
+		LRU_future = executor.submit(benchmark.calc_utility_LRU, X, W, C)
+		OGA_futures = [executor.submit(benchmark.calc_utility_OGA, X, W, T, N, C, r) for r in R]
+
+		BSH_utility = BSH_future.result()
+		LRU_utility = LRU_future.result()
+		OGA_utilities = [future.result() for future in OGA_futures]
 
 	print(f'Utility accumulated by BSH policy: {BSH_utility[-1]}')
 	print(f'Utility accumulated by LRU policy: {LRU_utility[-1]}')
