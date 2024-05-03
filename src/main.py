@@ -36,13 +36,13 @@ if __name__ == '__main__':
 		LRU_utility, LRU_time = LRU_future.result()
 		OGA_utilities, OGA_times = zip(*[future.result() for future in OGA_futures])
 
-	print(f'[{BSH_time}s] Utility accumulated by BSH policy: {BSH_utility[-1]}')
-	print(f'[{LRU_time}s] Utility accumulated by LRU policy: {LRU_utility[-1]}')
+	print(f'[{BSH_time:.2f}s] Utility accumulated by BSH policy: {BSH_utility[-1]:.2f}')
+	print(f'[{LRU_time:.2f}s] Utility accumulated by LRU policy: {LRU_utility[-1]:.2f}')
 
 	for i, r in enumerate(R):
-		print(f'[{OGA_times[i]}s] Utility accumulated by OGA [{r}] policy: {OGA_utilities[i][-1]}')
-		print(f'Regret achieved by OGA [{r}] vs BSH: {(BSH_utility[-1] - OGA_utilities[i][-1])}')
-		print(f'Regret achieved by OGA [{r}] vs LRU: {(LRU_utility[-1] - OGA_utilities[i][-1])}')
+		print(f'[{OGA_times[i]:.2f}s] Utility accumulated by OGA [{r}] policy: {OGA_utilities[i][-1]:.2f}')
+		print(f'Regret achieved by OGA [{r}] vs BSH: {(BSH_utility[-1] - OGA_utilities[i][-1]):.2f}')
+		print(f'Regret achieved by OGA [{r}] vs LRU: {(LRU_utility[-1] - OGA_utilities[i][-1]):.2f}')
 
 	fig, (dist, util) = plt.subplots(2, 1)
 	fig.suptitle(f'Average request utility over time [N = {N}, C = {C}]')
