@@ -26,7 +26,7 @@ def calc_utility_OGA (X, W, T, N, C, R):
 	for x in X:
 
 		# Calculate dynamic learning rate for current request x if not provided
-		if not R:
+		if R is None:
 			diam = OGA.calc_diam(N, C)
 			L = OGA.calc_L(x, W)
 			R = OGA.calc_learning_rate(diam, L, T)

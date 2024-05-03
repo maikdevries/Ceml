@@ -18,7 +18,7 @@ X = generate.random_X_zipfian(T, N, alpha = 0.8)
 # N-dimensional vector: static file-dependent utility vector (utility weights)
 W = generate.uniform_weights(N)
 
-# Learning rates to be used in online gradient ascent algorithm (dynamic if empty)
+# Learning rates to be used in online gradient ascent algorithm (computed dynamically for None entries)
 R = [0.05, 0.1, 0.3, 0.5, 0.7, 1.0]
 
 
@@ -28,19 +28,15 @@ if __name__ == '__main__':
 	# Retrieve lists of utility progression over time for various caching policies
 	BSH_utility = benchmark.calc_utility_BSH(X, W, C)
 	LRU_utility = benchmark.calc_utility_LRU(X, W, C)
-
-	if R:
-		OGA_utility = [benchmark.calc_utility_OGA(X, W, T, N, C, r) for r in R]
-	else:
-		OGA_utility = [benchmark.calc_utility_OGA(X, W, T, N, C, R)]
+	OGA_utilities = [benchmark.calc_utility_OGA(X, W, T, N, C, r) for r in R]
 
 	print(f'Utility accumulated by BSH policy: {BSH_utility[-1]}')
 	print(f'Utility accumulated by LRU policy: {LRU_utility[-1]}')
 
 	for i, r in enumerate(R):
-		print(f'Utility accumulated by OGA [{r}] policy: {OGA_utility[i][-1]}')
-		print(f'Regret achieved by OGA [{r}] vs BSH: {(BSH_utility[-1] - OGA_utility[i][-1])}')
-		print(f'Regret achieved by OGA [{r}] vs LRU: {(LRU_utility[-1] - OGA_utility[i][-1])}')
+		print(f'Utility accumulated by OGA [{r}] policy: {OGA_utilities[i][-1]}')
+		print(f'Regret achieved by OGA [{r}] vs BSH: {(BSH_utility[-1] - OGA_utilities[i][-1])}')
+		print(f'Regret achieved by OGA [{r}] vs LRU: {(LRU_utility[-1] - OGA_utilities[i][-1])}')
 
 	(fig, (dist, util)) = plt.subplots(2, 1)
 	fig.suptitle(f'Average request utility over time [N = {N}, C = {C}]')
@@ -60,7 +56,7 @@ if __name__ == '__main__':
 	util.plot((LRU_utility / time_slots), label = 'LRU')
 
 	for i, r in enumerate(R):
-		util.plot((OGA_utility[i] / time_slots), label = f'OGA [{r}]')
+		util.plot((OGA_utilities[i] / time_slots), label = f'OGA [{r}]')
 
 	plt.legend()
 	plt.show()
