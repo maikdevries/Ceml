@@ -1,13 +1,6 @@
 import numpy as np
 
 
-def zero_X (T, N):
-	"""
-	Generate a T-by-N boolean matrix which contains T N-dimensional zero vectors.
-	"""
-	return np.zeros((T, N), dtype = bool)
-
-
 # TODO: refactor random X generators into single function definition with desired distribution parameter
 def random_X (T, N):
 	"""
@@ -19,7 +12,7 @@ def random_X (T, N):
 	random_indices = np.random.randint(0, N, size = T)
 
 	# Generate T-by-N zero matrix and set a random element of each vector to True
-	X = zero_X(T, N)
+	X = np.zeros((T, N), dtype = bool)
 	X[np.arange(T), random_indices] = True
 
 	return X
@@ -41,7 +34,7 @@ def random_X_zipfian (T, N, alpha = 0.8):
 	random_indices = np.random.choice(N, size = T, p = probabilities)
 
 	# Generate T-by-N zero matrix and set a random element of each vector to True
-	X = zero_X(T, N)
+	X = np.zeros((T, N), dtype = bool)
 	X[np.arange(T), random_indices] = True
 
 	return X
@@ -57,7 +50,7 @@ def adversarial_X_round_robin (T, N, B):
 	round_robin_indices = np.arange(T) % B
 
 	# Generate T-by-N zero matrix and set element of each vector at the corresponding round-robin index to True
-	X = zero_X(T, N)
+	X = np.zeros((T, N), dtype = bool)
 	X[np.arange(T), round_robin_indices] = True
 
 	return X
