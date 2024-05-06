@@ -30,6 +30,7 @@ def random_X_zipfian (T, N, alpha = 0.8):
 	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random entry set to True according to a Zipfian
 	distribution.
 	"""
+	assert alpha >= 0, 'The Zipfian distribution parameter alpha must be non-negative'
 
 	# Approximate probabilities following Zipf's law for N elements and parameter alpha
 	probabilities = np.power(np.arange(1, N + 1), -alpha)
@@ -46,11 +47,11 @@ def random_X_zipfian (T, N, alpha = 0.8):
 	return X
 
 
-# TODO: assert B is within range [0 .. N]
 def adversarial_X_round_robin (T, N, B):
 	"""
 	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random entry set to True in a round-robin fashion.
 	"""
+	assert B > 0 and B <= N, 'The round-robin upper bound B must be within range [1 .. N]'
 
 	# Generate T indices between 0 and B (exclusive) in a round-robin fashion
 	round_robin_indices = np.arange(T) % B

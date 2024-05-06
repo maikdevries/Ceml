@@ -23,7 +23,13 @@ W = generate.uniform_weights(N)
 R = [0.05, 0.1, 0.3, 0.5, 0.7, 1.0]
 
 
-# TODO: assert C is within range [0 .. N]
+# Assert that the input parameters are within valid ranges
+assert T > 0, 'The number of time slots T must be positive'
+assert N > 0, 'The system library size N must be positive'
+assert C > 0 and C < N, 'The cache size C must be within range [1 .. N - 1]'
+assert R, 'The list of learning rates R must not be empty'
+
+
 if __name__ == '__main__':
 
 	# Calculate in parallel the utility progression over time for various caching policies
