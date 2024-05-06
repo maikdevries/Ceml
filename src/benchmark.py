@@ -27,7 +27,11 @@ def calc_utility_OGA (X, W, T, N, C, R, start_time = time.perf_counter()):
 	cache = OGA.construct(N)
 	utility = []
 
-	for x in X:
+	# Loop over all requests in X, except last request to avoid unnecessary yet costly update of cache configuration
+	for x in X[:-1]:
+
+		# Calculate the utility of the current OGA cache configuration
+		utility.append(OGA.calc_utility(x, cache, W))
 
 		# Calculate dynamic learning rate for current request x if not provided
 		if R is None:
@@ -35,13 +39,12 @@ def calc_utility_OGA (X, W, T, N, C, R, start_time = time.perf_counter()):
 			L = OGA.calc_L(x, W)
 			R = OGA.calc_learning_rate(diam, L, T)
 
-		# Calculate the utility of the current OGA cache configuration
-		utility.append(OGA.calc_utility(x, cache, W))
-
-		# TODO: avoid (costly) update of cache configuration on last request in X
 		# Update OGA cache configuration based on gradient of request and project back onto feasible solution set (constraints)
 		z = OGA.update(x, cache, W, R)
 		cache = OGA.project(z, N, C)
+
+	# Calculate the utility of the last request in X, without updating the cache configuration
+	utility.append(OGA.calc_utility(X[-1], cache, W))
 
 	return (
 		np.asarray(utility, dtype = np.float64).cumsum(),
