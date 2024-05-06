@@ -1,15 +1,13 @@
 import numpy as np
 
 
-# TODO: refactor random X generators into single function definition with desired distribution parameter
 def random_X (T, N):
 	"""
 	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random entry set to True.
 	"""
 
-	# TODO: replace np.random function call with corresponding Generator instance (recommended implementation)
 	# Generate T random indices between 0 and N (exclusive)
-	random_indices = np.random.randint(0, N, size = T)
+	random_indices = np.random.default_rng().integers(0, N, size = T)
 
 	# Generate T-by-N zero matrix and set a random element of each vector to True
 	X = np.zeros((T, N), dtype = bool)
@@ -29,9 +27,8 @@ def random_X_zipfian (T, N, alpha = 0.8):
 	probabilities = np.power(np.arange(1, N + 1), -alpha)
 	probabilities /= np.sum(probabilities)
 
-	# TODO: replace np.random function call with corresponding Generator instance (recommended implementation)
 	# Generate T random indices between 0 and N (exclusive) according to Zipf's law
-	random_indices = np.random.choice(N, size = T, p = probabilities)
+	random_indices = np.random.default_rng().choice(N, size = T, p = probabilities)
 
 	# Generate T-by-N zero matrix and set a random element of each vector to True
 	X = np.zeros((T, N), dtype = bool)
@@ -65,12 +62,11 @@ def zero_Y (N):
 
 def random_Y (N, C):
 	"""
-	Generate an N-dimensional vector with each element in range [0 .. 1] and all elements sum up to at most C.
+	Generate an N-dimensional vector with each element in range [0 .. 1) and all elements sum up to at most C.
 	"""
 
-	# TODO: replace np.random function call with corresponding Generator instance (recommended implementation)
-	# Generate N-dimensional vector with its elements randomly set in range [0 .. 1]
-	Y = np.random.rand(N)
+	# Generate N-dimensional vector with its elements randomly set in range [0 .. 1)
+	Y = np.random.default_rng().random(N)
 
 	# Scale Y such that all elements sum up to at most C
 	Y *= (C / np.sum(Y))
@@ -87,8 +83,6 @@ def uniform_weights (N):
 
 def random_weights (N):
 	"""
-	Generate an N-dimensional floating-point vector with each element in range [0 .. 1].
+	Generate an N-dimensional floating-point vector with each element in range [0 .. 1).
 	"""
-
-	# TODO: replace np.random function call with corresponding Generator instance (recommended implementation)
-	return np.random.rand(N)
+	return np.random.default_rng().random(N)
