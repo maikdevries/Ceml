@@ -34,3 +34,13 @@ def calc_utility (x, w):
 	Calculate utility of request instance (x) and static file weights (w) in case of LRU cache hit.
 	"""
 	return np.sum(w * x)
+
+
+def to_vector (y: deque, N):
+	"""
+	Convert LRU cache configuration (y) to an N-dimensional vector.
+	"""
+	vector = np.zeros(N, dtype = np.float64)
+	vector[list(y)] = 1.0
+
+	return vector

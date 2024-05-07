@@ -11,9 +11,10 @@ def calc_utility_BSH (X, W, N, C, start_time = time.perf_counter()):
 	Given a T-by-N request matrix X, accumulate the utility of the best caching configuration in hindsight.
 	"""
 	cache = BSH.construct(X, W, N, C)
-	
+
 	return (
 		BSH.calc_utility(X, cache, W),
+		cache,
 		time.perf_counter() - start_time,
 	)
 
@@ -46,11 +47,12 @@ def calc_utility_OGA (X, W, T, N, C, R, start_time = time.perf_counter()):
 
 	return (
 		np.asarray(utility, dtype = np.float64).cumsum(),
+		cache,
 		time.perf_counter() - start_time,
 	)
 
 
-def calc_utility_LRU (X, W, C, start_time = time.perf_counter()):
+def calc_utility_LRU (X, W, N, C, start_time = time.perf_counter()):
 	"""
 	Given a T-by-N request matrix X, accumulate the utility of the least recently used caching policy.
 	"""
@@ -67,5 +69,6 @@ def calc_utility_LRU (X, W, C, start_time = time.perf_counter()):
 
 	return (
 		np.asarray(utility, dtype = np.float64).cumsum(),
+		LRU.to_vector(cache, N),
 		time.perf_counter() - start_time,
 	)
