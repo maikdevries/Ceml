@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
 	# Calculate in parallel the utility progression over time for various caching policies
 	with concurrent.futures.ProcessPoolExecutor() as executor:
-		BSH_future = executor.submit(benchmark.calc_utility_BSH, X, W, C)
+		BSH_future = executor.submit(benchmark.calc_utility_BSH, X, W, N, C)
 		LRU_future = executor.submit(benchmark.calc_utility_LRU, X, W, C)
 		OGA_futures = [executor.submit(benchmark.calc_utility_OGA, X, W, T, N, C, r) for r in R]
 
