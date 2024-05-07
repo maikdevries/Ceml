@@ -55,12 +55,12 @@ if __name__ == '__main__':
 		print(f'Final distance between OGA [{r}] and LRU cache configuration: {np.linalg.norm(LRU_cache - OGA_caches[i]):.2f}')
 
 	fig, (dist, util) = plt.subplots(2, 1)
-	fig.suptitle(f'Average request utility over time [N = {N}, C = {C}]')
+	fig.suptitle(f'Average request utility over time [T = {T}, N = {N}, C = {C}]')
 
 	dist.set_ylabel('File requests')
 
 	util.set_ylabel('Average utility')
-	util.set_xlabel('Time')
+	util.set_xlabel('Time slot')
 
 	# Plot total number of requests per file over horizon T (request distribution)
 	dist.plot(np.sum(X, axis = 0))
