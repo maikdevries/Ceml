@@ -6,3 +6,6 @@
 
 # Ignore Python cache directory
 __pycache__/
+
+# Ignore simulation results directory
+results/
