@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from parameters import T, N, C, X, W, R
 import benchmark
+import output
 
 
 if __name__ == '__main__':
@@ -25,6 +26,16 @@ if __name__ == '__main__':
 		print(f'[{OGA_times[i]:.2f}s] Utility accumulated by OGA [{r}] policy: {OGA_utilities[i][-1]:.2f}')
 		print(f'Regret achieved by OGA [{r}] vs BSH: {(BSH_utility[-1] - OGA_utilities[i][-1]):.2f}')
 		print(f'Regret achieved by OGA [{r}] vs LRU: {(LRU_utility[-1] - OGA_utilities[i][-1]):.2f}')
+
+	# Save the generated request matrix (X) to disk
+	output.save_request_matrix(X, 'request_matrix')
+
+	# Save the utility progression and cache configuration state(s) of each caching policy to disk
+	output.save_results(BSH_utility, BSH_cache, 'BSH')
+	output.save_results(LRU_utility, LRU_caches, 'LRU')
+
+	for i, r in enumerate(R):
+		output.save_results(OGA_utilities[i], OGA_caches[i], f'OGA_[{r}]')
 
 	fig, (dist, hist, util) = plt.subplots(3, 1)
 	fig.suptitle(f'Average request utility over time [T = {T}, N = {N}, C = {C}]')
