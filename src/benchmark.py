@@ -49,7 +49,7 @@ def calc_utility_OGA (X, W, T, N, C, R, start_time = time.perf_counter()):
 	utility.append(OGA.calc_utility(X[-1], cache, W))
 
 	return (
-		np.asarray(utility, dtype = np.float64).cumsum(),
+		np.asarray(utility, dtype = np.float64),
 		np.asarray(state, dtype = np.float64),
 		time.perf_counter() - start_time,
 	)
@@ -75,7 +75,7 @@ def calc_utility_LRU (X, W, N, C, start_time = time.perf_counter()):
 			utility.append(0)
 
 	return (
-		np.asarray(utility, dtype = np.float64).cumsum(),
+		np.asarray(utility, dtype = np.float64),
 		np.asarray(state, dtype = np.float64),
 		time.perf_counter() - start_time,
 	)

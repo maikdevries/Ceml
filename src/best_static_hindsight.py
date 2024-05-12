@@ -26,8 +26,4 @@ def calc_utility (X, Y, W):
 	"""
 	Calculate utility of request matrix (X) for cache configuration (Y) and static file weights (W).
 	"""
-
-	# Generate a T-by-N matrix where each row contains the file request frequency up to and including the current timeslot
-	frequencies = np.cumsum(X, axis = 0)
-
-	return np.sum(W * frequencies * Y, axis = 1)
+	return np.sum(W * X * Y, axis = 1)

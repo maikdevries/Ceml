@@ -56,6 +56,11 @@ if __name__ == '__main__':
 	LRU_utility, LRU_caches = load_results('LRU')
 	OGA_utilities, OGA_caches = zip(*[load_results(f'OGA_[{r}]') for r in R])
 
+	# Sum the achieved utility over time to obtain the accumulated utility
+	BSH_utility = BSH_utility.cumsum()
+	LRU_utility = LRU_utility.cumsum()
+	OGA_utilities = np.asarray([u.cumsum() for u in OGA_utilities])
+
 	print(f'Utility accumulated by BSH policy: {BSH_utility[-1]:.2f}')
 	print(f'Utility accumulated by LRU policy: {LRU_utility[-1]:.2f}')
 
