@@ -4,6 +4,7 @@ import numpy as np
 import best_static_hindsight as BSH
 import online_gradient_ascent as OGA
 import least_recently_used as LRU
+import exponentiated_gradient as EG
 
 
 def calc_utility_BSH (X, W, N, C, start_time = time.perf_counter()):
@@ -73,6 +74,33 @@ def calc_utility_LRU (X, W, N, C, start_time = time.perf_counter()):
 			utility.append(LRU.calc_utility(x, W))
 		else:
 			utility.append(0)
+
+	return (
+		np.asarray(utility, dtype = np.float64),
+		np.asarray(state, dtype = np.float64),
+		time.perf_counter() - start_time,
+	)
+
+
+def calc_utility_EG (U, E, learning_rate, start_time = time.perf_counter()):
+	"""
+	Given a T-by-E utility matrix U, accumulate the utility of the exponentiated gradient meta learner.
+	"""
+	weights = EG.construct(E)
+	state = []
+	utility = []
+
+	for u in U:
+
+		# Randomly pick an expert based on current expert advice weights
+		r = EG.select_expert(weights, E)
+
+		# Calculate utility of selected expert
+		state.append(weights.copy())
+		utility.append(EG.calc_utility(r, u))
+
+		# Update expert advice weights based on gradient of utility
+		weights = EG.update(u, weights, learning_rate)
 
 	return (
 		np.asarray(utility, dtype = np.float64),

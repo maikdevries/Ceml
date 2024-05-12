@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from parameters import T, N, C, R
+from parameters import T, N, C, R, L
 
 
 def save_request_matrix (X, file_name):
@@ -55,11 +55,13 @@ if __name__ == '__main__':
 	BSH_utility, BSH_cache = load_results('BSH')
 	LRU_utility, LRU_caches = load_results('LRU')
 	OGA_utilities, OGA_caches = zip(*[load_results(f'OGA_[{r}]') for r in R])
+	EG_utility, EG_weights = load_results(f'EG_[{L}]')
 
 	# Sum the achieved utility over time to obtain the accumulated utility
 	BSH_utility = BSH_utility.cumsum()
 	LRU_utility = LRU_utility.cumsum()
 	OGA_utilities = np.asarray([u.cumsum() for u in OGA_utilities])
+	EG_utility = EG_utility.cumsum()
 
 	print(f'Utility accumulated by BSH policy: {BSH_utility[-1]:.2f}')
 	print(f'Utility accumulated by LRU policy: {LRU_utility[-1]:.2f}')
@@ -68,9 +70,10 @@ if __name__ == '__main__':
 		print(f'Utility accumulated by OGA [{r}] policy: {OGA_utilities[i][-1]:.2f}')
 		print(f'Regret achieved by OGA [{r}] vs BSH: {(BSH_utility[-1] - OGA_utilities[i][-1]):.2f}')
 		print(f'Regret achieved by OGA [{r}] vs LRU: {(LRU_utility[-1] - OGA_utilities[i][-1]):.2f}')
+		print(f'Regret achieved by EG [{L}] vs OGA [{r}]: {OGA_utilities[i][-1] - EG_utility[-1]:.2f}')
 
-	fig, (dist, hist, util) = plt.subplots(3, 1)
-	fig.suptitle(f'Average request utility over time [T = {T}, N = {N}, C = {C}]')
+	fig_expert, (dist, hist, util) = plt.subplots(3, 1)
+	fig_expert.suptitle(f'Average request utility over time [T = {T}, N = {N}, C = {C}]')
 
 	dist.set_ylabel('File requests')
 	hist.set_ylabel('Distance to BSH cache')
@@ -93,6 +96,23 @@ if __name__ == '__main__':
 	for i, r in enumerate(R):
 		hist.plot(np.linalg.norm(BSH_cache - OGA_caches[i], axis = 1), label = f'OGA [{r}]')
 		util.plot((OGA_utilities[i] / time_slots), label = f'OGA [{r}]')
+
+	fig_meta, (dist, weights, util) = plt.subplots(3, 1)
+	fig_meta.suptitle(f'Average request utility over time meta-learner [T = {T}, N = {N}, C = {C}]')
+
+	dist.set_ylabel('File requests')
+	weights.set_ylabel('Expert weights')
+
+	util.set_ylabel('Average utility')
+	util.set_xlabel('Time slot')
+
+	dist.plot(np.sum(X, axis = 0))
+
+	for i, r in enumerate(R):
+		weights.plot(EG_weights[:, i], label = f'OGA [{r}]')
+		util.plot((OGA_utilities[i] / time_slots), label = f'OGA [{r}]')
+
+	util.plot(EG_utility / time_slots, label = f'EG [{L}]')
 
 	plt.legend()
 	plt.show()
