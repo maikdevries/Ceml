@@ -1,4 +1,4 @@
-import generate
+from src import generate
 
 # The number of time slots, and consequently the number of requests or iterations (horizon)
 T = 50000

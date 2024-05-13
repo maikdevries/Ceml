@@ -1,8 +1,7 @@
 import concurrent.futures
 
 from parameters import T, N, C, X, W, R
-import benchmark
-import output
+from src import benchmark, output
 
 
 if __name__ == '__main__':

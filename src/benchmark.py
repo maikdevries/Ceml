@@ -1,10 +1,7 @@
 import time
 import numpy as np
 
-import best_static_hindsight as BSH
-import online_gradient_ascent as OGA
-import least_recently_used as LRU
-import exponentiated_gradient as EG
+from src import	best_static_hindsight as BSH, online_gradient_ascent as OGA, least_recently_used as LRU, exponentiated_gradient as EG
 
 
 def calc_utility_BSH (X, W, N, C, start_time = time.perf_counter()):
