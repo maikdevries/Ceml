@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from parameters import T, N, C, R, L
-
 
 def save_request_matrix (X, file_name):
 	"""
@@ -46,73 +44,89 @@ def load_results (file_name):
 	return (utility, state)
 
 
-if __name__ == '__main__':
+def plot_request_distribution (X, T):
+	"""
+	Plot the request distribution (X) over the horizon (T).
+	"""
+	fig, ax = plt.subplots()
+	fig.suptitle(f'File request distribution\n[T = {T}]')
 
-	# Load the generated request matrix (X) from disk
-	X = load_request_matrix('request_matrix')
+	ax.set_ylabel('Number of requests')
+	ax.set_xlabel('File')
 
-	# Load the utility progression and cache configuration state(s) of each caching policy from disk
-	BSH_utility, BSH_cache = load_results('BSH')
-	LRU_utility, LRU_caches = load_results('LRU')
-	OGA_utilities, OGA_caches = zip(*[load_results(f'OGA_[{r}]') for r in R])
-	EG_utility, EG_weights = load_results(f'EG_[{L}]')
+	# Plot total number of requests per file over horizon T (request distribution)
+	ax.plot(np.sum(X, axis = 0))
 
-	# Sum the achieved utility over time to obtain the accumulated utility
-	BSH_utility = BSH_utility.cumsum()
-	LRU_utility = LRU_utility.cumsum()
-	OGA_utilities = np.asarray([u.cumsum() for u in OGA_utilities])
-	EG_utility = EG_utility.cumsum()
+	plt.show()
 
-	print(f'Utility accumulated by BSH policy: {BSH_utility[-1]:.2f}')
-	print(f'Utility accumulated by LRU policy: {LRU_utility[-1]:.2f}')
+
+def plot_expert_distances (distances, N, C, R):
+	"""
+	Plot the Euclidean distance of each caching policy expert to the BSH cache configuration.
+	"""
+	fig, ax = plt.subplots()
+	fig.suptitle(f'Expert cache configuration distance to BSH over time\n[N = {N}, C = {C}]')
+
+	ax.set_ylabel('Euclidean distance')
+	ax.set_xlabel('Time slot')
 
 	for i, r in enumerate(R):
-		print(f'Utility accumulated by OGA [{r}] policy: {OGA_utilities[i][-1]:.2f}')
-		print(f'Regret achieved by OGA [{r}] vs BSH: {(BSH_utility[-1] - OGA_utilities[i][-1]):.2f}')
-		print(f'Regret achieved by OGA [{r}] vs LRU: {(LRU_utility[-1] - OGA_utilities[i][-1]):.2f}')
-		print(f'Regret achieved by EG [{L}] vs OGA [{r}]: {OGA_utilities[i][-1] - EG_utility[-1]:.2f}')
+		ax.plot(distances[i], label = f'OGA [{r}]')
 
-	fig_expert, (dist, hist, util) = plt.subplots(3, 1)
-	fig_expert.suptitle(f'Average request utility over time [T = {T}, N = {N}, C = {C}]')
+	plt.legend()
+	plt.show()
 
-	dist.set_ylabel('File requests')
-	hist.set_ylabel('Distance to BSH cache')
 
-	util.set_ylabel('Average utility')
-	util.set_xlabel('Time slot')
+def plot_expert_utilities (utilities, T, N, C, R):
+	"""
+	Plot the utility progression of each caching policy expert.
+	"""
+	fig, ax = plt.subplots()
+	fig.suptitle(f'Expert utility over time\n[N = {N}, C = {C}]')
+
+	ax.set_ylabel('Average utility')
+	ax.set_xlabel('Time slot')
 
 	# Generate list of time slots to be used in deriving average utility per time slot
 	time_slots = np.arange(1, T + 1)
 
-	# Plot total number of requests per file over horizon T (request distribution)
-	dist.plot(np.sum(X, axis = 0))
-
-	# Plot the Euclidean distance between BSH cache configuration and other caching policies
-	hist.plot(np.linalg.norm(BSH_cache - LRU_caches, axis = 1), label = 'LRU')
-
-	util.plot((BSH_utility / time_slots), label = 'BSH')
-	util.plot((LRU_utility / time_slots), label = 'LRU')
-
 	for i, r in enumerate(R):
-		hist.plot(np.linalg.norm(BSH_cache - OGA_caches[i], axis = 1), label = f'OGA [{r}]')
-		util.plot((OGA_utilities[i] / time_slots), label = f'OGA [{r}]')
-
-	fig_meta, (dist, weights, util) = plt.subplots(3, 1)
-	fig_meta.suptitle(f'Average request utility over time meta-learner [T = {T}, N = {N}, C = {C}]')
-
-	dist.set_ylabel('File requests')
-	weights.set_ylabel('Expert weights')
-
-	util.set_ylabel('Average utility')
-	util.set_xlabel('Time slot')
-
-	dist.plot(np.sum(X, axis = 0))
-
-	for i, r in enumerate(R):
-		weights.plot(EG_weights[:, i], label = f'OGA [{r}]')
-		util.plot((OGA_utilities[i] / time_slots), label = f'OGA [{r}]')
-
-	util.plot(EG_utility / time_slots, label = f'EG [{L}]')
+		ax.plot(utilities[i] / time_slots, label = f'OGA [{r}]')
 
 	plt.legend()
+	plt.show()
+
+
+def plot_meta_learner_weights (weights, R, L):
+	"""
+	Plot the caching policy expert weights of the meta-learner.
+	"""
+	fig, ax = plt.subplots()
+	fig.suptitle(f'Meta-learner expert weights over time\n[L = {L}]')
+
+	ax.set_ylabel('Expert weight')
+	ax.set_xlabel('Time slot')
+
+	for i, r in enumerate(R):
+		ax.plot(weights[:, i], label = f'OGA [{r}]')
+
+	plt.legend()
+	plt.show()
+
+
+def plot_meta_learner_utility (utility, T, N, C, L):
+	"""
+	Plot the utility progression of the meta-learner.
+	"""
+	fig, ax = plt.subplots()
+	fig.suptitle(f'Meta-learner utility over time\n[N = {N}, C = {C}, L = {L}]')
+
+	ax.set_ylabel('Average utility')
+	ax.set_xlabel('Time slot')
+
+	# Generate list of time slots to be used in deriving average utility per time slot
+	time_slots = np.arange(1, T + 1)
+
+	ax.plot(utility / time_slots)
+
 	plt.show()
