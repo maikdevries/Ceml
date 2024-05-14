@@ -57,6 +57,7 @@ def plot_request_distribution (X, T):
 	# Plot total number of requests per file over horizon T (request distribution)
 	ax.plot(np.sum(X, axis = 0))
 
+	plt.savefig('./results/plots/request_distribution.png', dpi = 300)
 	plt.show()
 
 
@@ -74,6 +75,7 @@ def plot_expert_distances (distances, N, C, R):
 		ax.plot(distances[i], label = f'OGA [{r}]')
 
 	plt.legend()
+	plt.savefig('./results/plots/expert_distances.png', dpi = 300)
 	plt.show()
 
 
@@ -94,6 +96,7 @@ def plot_expert_utilities (utilities, T, N, C, R):
 		ax.plot(utilities[i] / time_slots, label = f'OGA [{r}]')
 
 	plt.legend()
+	plt.savefig('./results/plots/expert_utilities.png', dpi = 300)
 	plt.show()
 
 
@@ -113,6 +116,7 @@ def plot_meta_learner_weights (weights, R, L):
 		a.label_outer()
 
 	plt.legend()
+	plt.savefig('./results/plots/meta_learner_weights.png', dpi = 300)
 	plt.show()
 
 
@@ -133,4 +137,5 @@ def plot_meta_learner_utilities (utilities, T, N, C, L):
 		ax.plot(utilities[i] / time_slots, label = f'EG [{l}]')
 
 	plt.legend()
+	plt.savefig('./results/plots/meta_learner_utilities.png', dpi = 300)
 	plt.show()
