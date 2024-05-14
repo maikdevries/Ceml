@@ -16,6 +16,22 @@ def random_X (T, N):
 	return X
 
 
+def random_X_bounded (T, N, B):
+	"""
+	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random entry in range [0 .. B] set to True.
+	"""
+	assert B > 0 and B <= N, 'The round-robin upper bound B must be within range [1 .. N]'
+
+ 	# Generate T random indices between 0 and B (exclusive)
+	random_indices = np.random.default_rng().integers(0, B, size = T)
+
+ 	# Generate T-by-N zero matrix and set random element of each vector to True
+	X = np.zeros((T, N), dtype = bool)
+	X[np.arange(T), random_indices] = True
+
+	return X
+
+
 def random_X_zipfian (T, N, alpha = 0.8):
 	"""
 	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random entry set to True according to a Zipfian
