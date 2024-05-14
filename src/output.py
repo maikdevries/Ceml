@@ -6,7 +6,7 @@ def save_request_matrix (X, file_name):
 	"""
 	Save the request matrix (X) to disk.
 	"""
-	with open(f'./data/{file_name}.npy', 'wb') as f:
+	with open(f'./results/{file_name}.npy', 'wb') as f:
 		np.save(f, X)
 
 
@@ -14,7 +14,7 @@ def load_request_matrix (file_name):
 	"""
 	Load the request matrix from disk.
 	"""
-	with open(f'./data/{file_name}.npy', 'rb') as f:
+	with open(f'./results/{file_name}.npy', 'rb') as f:
 		X = np.load(f)
 
 	return X
@@ -24,10 +24,10 @@ def save_results (utility, state, file_name):
 	"""
 	Save the utility progression and cache configuration state(s) of a caching policy to disk.
 	"""
-	with open(f'./data/utility/{file_name}.npy', 'wb') as f:
+	with open(f'./results/utility/{file_name}.npy', 'wb') as f:
 		np.save(f, utility)
 
-	with open(f'./data/state/{file_name}.npy', 'wb') as f:
+	with open(f'./results/state/{file_name}.npy', 'wb') as f:
 		np.save(f, state)
 
 
@@ -35,10 +35,10 @@ def load_results (file_name):
 	"""
 	Load the utility progression and cache configuration state(s) of a caching policy from disk.
 	"""
-	with open(f'./data/utility/{file_name}.npy', 'rb') as f:
+	with open(f'./results/utility/{file_name}.npy', 'rb') as f:
 		utility = np.load(f)
 
-	with open(f'./data/state/{file_name}.npy', 'rb') as f:
+	with open(f'./results/state/{file_name}.npy', 'rb') as f:
 		state = np.load(f)
 
 	return (utility, state)

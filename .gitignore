@@ -7,5 +7,5 @@
 # Ignore Python cache directory
 __pycache__/
 
-# Ignore simulation result data directory
-data/
+# Ignore simulation results directory
+results/
