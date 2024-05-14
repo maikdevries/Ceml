@@ -17,7 +17,7 @@ def calc_utility_BSH (X, W, N, C, start_time = time.perf_counter()):
 	)
 
 
-def calc_utility_OGA (X, W, T, N, C, R, start_time = time.perf_counter()):
+def calc_utility_OGA (X, W, T, N, C, R, BSH, start_time = time.perf_counter()):
 	"""
 	Given a T-by-N request matrix X, accumulate the utility of the online gradient ascent algorithm.
 	"""
@@ -28,8 +28,8 @@ def calc_utility_OGA (X, W, T, N, C, R, start_time = time.perf_counter()):
 	# Loop over all requests in X, except last request to avoid unnecessary yet costly update of cache configuration
 	for x in X[:-1]:
 
-		# Store the current OGA cache configuration and calculate its utility
-		state.append(cache.copy())
+		# Store the current OGA cache configuration's Euclidean distance to BSH and calculate its utility
+		state.append(np.linalg.norm(BSH - cache))
 		utility.append(OGA.calc_utility(x, cache, W))
 
 		# Calculate dynamic learning rate for current request x if not provided
@@ -43,7 +43,7 @@ def calc_utility_OGA (X, W, T, N, C, R, start_time = time.perf_counter()):
 		cache = OGA.project(z, N, C)
 
 	# Store the current OGA cache configuration and calculate the utility of the last request in X, without updating the cache configuration
-	state.append(cache.copy())
+	state.append(np.linalg.norm(BSH - cache))
 	utility.append(OGA.calc_utility(X[-1], cache, W))
 
 	return (
@@ -53,7 +53,7 @@ def calc_utility_OGA (X, W, T, N, C, R, start_time = time.perf_counter()):
 	)
 
 
-def calc_utility_LRU (X, W, N, C, start_time = time.perf_counter()):
+def calc_utility_LRU (X, W, N, C, BSH, start_time = time.perf_counter()):
 	"""
 	Given a T-by-N request matrix X, accumulate the utility of the least recently used caching policy.
 	"""
@@ -63,8 +63,8 @@ def calc_utility_LRU (X, W, N, C, start_time = time.perf_counter()):
 
 	for x in X:
 
-		# Store the current LRU cache configuration
-		state.append(LRU.to_vector(cache, N))
+		# Store the current LRU cache configuration's Euclidean distance to BSH
+		state.append(np.linalg.norm(BSH - LRU.to_vector(cache, N)))
 
 		# Update LRU cache configuration and calculate utility based on whether current request x was a cache hit or miss
 		if LRU.update(x, cache):

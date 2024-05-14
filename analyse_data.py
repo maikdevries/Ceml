@@ -35,7 +35,7 @@ if __name__ == '__main__':
 	output.plot_request_distribution(X, T)
 
 	# Plot the Euclidean distance of each caching policy expert to the BSH cache configuration
-	output.plot_expert_distances([np.linalg.norm(BSH_cache - cache, axis = 1) for cache in OGA_caches], N, C, R)
+	output.plot_expert_distances(OGA_caches, N, C, R)
 
 	# Plot the utility progression of each caching policy expert
 	output.plot_expert_utilities(OGA_utilities, T, N, C, R)
