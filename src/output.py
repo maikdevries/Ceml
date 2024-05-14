@@ -109,7 +109,7 @@ def plot_meta_learner_weights (weights, R, L):
 	fig.supylabel('Expert weight')
 	fig.supxlabel('Time slot')
 
-	for i, a in enumerate(ax):
+	for i, a in enumerate(ax if len(L) > 1 else [ax]):
 		for j, r in enumerate(R):
 			a.plot(weights[i][:, j], label = f'OGA [{r}]')
 

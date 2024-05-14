@@ -23,6 +23,13 @@ def select_expert (m, R):
 	return r
 
 
+def calc_learning_rate (L, T, R):
+	"""
+	Calculate the learning rate.
+	"""
+	return np.sqrt((2 * np.log(R)) / (np.power(L, 2) * T))
+
+
 def calc_utility (r, U):
 	"""
 	Calculate utility of selected expert (r) based on combined utility vector (U).

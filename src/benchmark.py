@@ -79,13 +79,17 @@ def calc_utility_LRU (X, W, N, C, start_time = time.perf_counter()):
 	)
 
 
-def calc_utility_EG (U, E, learning_rate, start_time = time.perf_counter()):
+def calc_utility_EG (U, T, E, learning_rate, start_time = time.perf_counter()):
 	"""
 	Given a T-by-E utility matrix U, accumulate the utility of the exponentiated gradient meta learner.
 	"""
 	weights = EG.construct(E)
 	state = []
 	utility = []
+
+	# Calculate dynamic learning rate if not provided
+	if learning_rate is None:
+		learning_rate = EG.calc_learning_rate(np.max(U), T, E)
 
 	for u in U:
 

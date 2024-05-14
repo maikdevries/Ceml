@@ -1,7 +1,7 @@
 import concurrent.futures
 import numpy as np
 
-from parameters import R, L
+from parameters import T, R, L
 from src import benchmark, output
 
 
@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
 	# Calculate in parallel the utility progression over time for various meta-learners
 	with concurrent.futures.ProcessPoolExecutor() as executor:
-		EG_futures = [executor.submit(benchmark.calc_utility_EG, OGA_utilities, len(R), l) for l in L]
+		EG_futures = [executor.submit(benchmark.calc_utility_EG, OGA_utilities, T, len(R), l) for l in L]
 
 		EG_utilities, EG_weights, EG_times = zip(*[future.result() for future in EG_futures])
 
