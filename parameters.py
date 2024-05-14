@@ -16,13 +16,9 @@ W = generate.uniform_weights(N)
 # Learning rates to be used in online gradient ascent (caching agent) algorithm (computed dynamically for None entries)
 R = [0.05, 0.1, 0.3, 0.5, 0.7, 1.0]
 
-# Learning rates to be used in exponentiated gradient (meta-learner) algorithm
-L = [0.1, 0.2, 0.5, 1.0]
-
 
 # Assert that the input parameters are within valid ranges
 assert T > 0, 'The number of time slots T must be positive'
 assert N > 0, 'The system library size N must be positive'
 assert C > 0 and C < N, 'The cache size C must be within range [1 .. N - 1]'
 assert R, 'The list of caching agent learning rates R must not be empty'
-assert L, 'The list of meta-learner learning rates L must not be empty'

@@ -100,29 +100,27 @@ def plot_expert_utilities (utilities, T, N, C, R):
 	plt.show()
 
 
-def plot_meta_learner_weights (weights, R, L):
+def plot_meta_learner_weights (weights, R):
 	"""
-	Plot the caching policy expert weights of each meta-learner.
+	Plot the caching policy expert weights of the meta-learner.
 	"""
-	fig, ax = plt.subplots(len(L), sharex = True, sharey = True)
-	fig.suptitle(f'Meta-learner expert weights over time\n[L = {L}]')
-	fig.supylabel('Expert weight')
-	fig.supxlabel('Time slot')
+	fig, ax = plt.subplots()
+	fig.suptitle('Meta-learner expert weights over time')
 
-	for i, a in enumerate(ax if len(L) > 1 else [ax]):
-		for j, r in enumerate(R):
-			a.plot(weights[i][:, j], label = f'OGA [{r}]')
+	ax.set_ylabel('Expert weight')
+	ax.set_xlabel('Time slot')
 
-		a.label_outer()
+	for i, r in enumerate(R):
+		ax.plot(weights[:, i], label = f'OGA [{r}]')
 
 	plt.legend()
 	plt.savefig('./results/plots/meta_learner_weights.png', dpi = 300)
 	plt.show()
 
 
-def plot_meta_learner_utilities (utilities, T, N, C, L):
+def plot_meta_learner_utility (utility, T, N, C):
 	"""
-	Plot the utility progression of each meta-learner.
+	Plot the utility progression of the meta-learner.
 	"""
 	fig, ax = plt.subplots()
 	fig.suptitle(f'Meta-learner utility over time\n[N = {N}, C = {C}]')
@@ -133,9 +131,7 @@ def plot_meta_learner_utilities (utilities, T, N, C, L):
 	# Generate list of time slots to be used in deriving average utility per time slot
 	time_slots = np.arange(1, T + 1)
 
-	for i, l in enumerate(L):
-		ax.plot(utilities[i] / time_slots, label = f'EG [{l}]')
+	ax.plot(utility / time_slots, label = 'EG')
 
-	plt.legend()
 	plt.savefig('./results/plots/meta_learner_utilities.png', dpi = 300)
 	plt.show()

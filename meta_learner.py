@@ -1,7 +1,6 @@
-import concurrent.futures
 import numpy as np
 
-from parameters import T, R, L
+from parameters import T, R
 from src import benchmark, output
 
 
@@ -11,13 +10,11 @@ if __name__ == '__main__':
 	OGA_utilities, _ = zip(*[output.load_results(f'OGA_[{r}]') for r in R])
 	OGA_utilities = np.asarray(OGA_utilities).T
 
-	# Calculate in parallel the utility progression over time for various meta-learners
-	with concurrent.futures.ProcessPoolExecutor() as executor:
-		EG_futures = [executor.submit(benchmark.calc_utility_EG, OGA_utilities, T, len(R), l) for l in L]
+	# Calculate the utility progression over time for the meta-learner
+	EG_utility, EG_weights, EG_time = benchmark.calc_utility_EG(OGA_utilities, T, len(R))
 
-		EG_utilities, EG_weights, EG_times = zip(*[future.result() for future in EG_futures])
+	# Print the running time to the console
+	print(f'[{EG_time:.2f}s] EG meta learner')
 
-	# For each meta-learner print the running time to the console, and save the utility progression and weights to disk
-	for i, l in enumerate(L):
-		print(f'[{EG_times[i]:.2f}s] EG [{l}] meta learner')
-		output.save_results(EG_utilities[i], EG_weights[i], f'EG_[{l}]')
+	# Save the utility progression and expert weights to disk
+	output.save_results(EG_utility, EG_weights, 'EG')
