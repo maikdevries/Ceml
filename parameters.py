@@ -1,11 +1,11 @@
 from src import generate
 
 # The number of time slots, and consequently the number of requests or iterations (horizon)
-T = 50000
+T = 200000
 
 # The size of the system's library of files and cache, where C should be (significantly) smaller than N
-N = 5000
-C = 500
+N = 2500
+C = 250
 
 # T-by-N matrix: at each timeslot t a single entry is set to True (file request)
 X = generate.random_X_zipfian(T, N, alpha = 0.8)
@@ -14,7 +14,7 @@ X = generate.random_X_zipfian(T, N, alpha = 0.8)
 W = generate.uniform_weights(N)
 
 # Learning rates to be used in online gradient ascent (caching agent) algorithm (computed dynamically for None entries)
-R = [0.05, 0.1, 0.3, 0.5, 0.7, 1.0]
+R = [0.05, 0.1, 0.3, 1.0]
 
 
 # Assert that the input parameters are within valid ranges
