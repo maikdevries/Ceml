@@ -33,12 +33,6 @@ def calc_utility_OGA (X, W, T, N, C, eta, start_time = time.perf_counter()):
 		# Accumulate the utility of the current request (X[t]) based on the current cache configuration (Y) and utility weights (W[t])
 		utility.append(OGA.calc_utility(X[t], Y, W[t]))
 
-		# Calculate dynamic learning rate for current request (X[t]) if not provided
-		if eta is None:
-			diam = OGA.calc_diam(N, C)
-			L = OGA.calc_L(X[t], W[t])
-			eta = OGA.calc_learning_rate(diam, L, T)
-
 		# Update OGA cache configuration (Y) based on the gradient of the current request (X[t]) and project back onto feasible solution set
 		z = OGA.update(X[t], Y, W[t], eta)
 		Y = OGA.project(z, N, C)
