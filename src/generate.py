@@ -69,27 +69,6 @@ def X_round_robin (T, N, B):
 	return X
 
 
-def Y_zero (N):
-	"""
-	Generate an N-dimensional zero vector.
-	"""
-	return np.zeros(N, dtype = np.float64)
-
-
-def Y_random (N, C):
-	"""
-	Generate an N-dimensional vector with each element in range [0 .. 1) and all its elements summing up to at most C.
-	"""
-
-	# Generate an N-dimensional vector with its elements randomly set in range [0 .. 1)
-	Y = np.random.default_rng().random(N)
-
-	# Scale Y such that all its elements sum up to at most C
-	Y *= (C / np.sum(Y))
-
-	return Y
-
-
 def W_uniform (T, N):
 	"""
 	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with each element set to True.
