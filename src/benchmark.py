@@ -1,109 +1,107 @@
-import time
 import numpy as np
+import time
 
-from src import	best_static_hindsight as BSH, online_gradient_ascent as OGA, least_recently_used as LRU, exponentiated_gradient as EG
+from src import (
+    best_static_configuration_hindsight as BSCH,
+    least_recently_used as LRU,
+    online_gradient_ascent as OGA,
+    exponentiated_gradient as EG,
+)
 
 
-def calc_utility_BSH (X, W, N, C, start_time = time.perf_counter()):
+def calc_utility_BSCH (X, W, N, C, start_time = time.perf_counter()):
 	"""
-	Given a T-by-N request matrix X, accumulate the utility of the best caching configuration in hindsight.
+	Given a T-by-N request matrix (X), accumulate the utility of the best static configuration in hindsight.
 	"""
-	cache = BSH.construct(X, W, N, C)
+	Y = BSCH.construct(X, W, N, C)
 
 	return (
-		BSH.calc_utility(X, cache, W),
-		cache,
+		BSCH.calc_utility(X, Y, W),
+		Y,
 		time.perf_counter() - start_time,
 	)
 
 
-def calc_utility_OGA (X, W, T, N, C, R, BSH, start_time = time.perf_counter()):
+def calc_utility_OGA (X, W, T, N, C, eta, BSCH_cache, start_time = time.perf_counter()):
 	"""
-	Given a T-by-N request matrix X, accumulate the utility of the online gradient ascent algorithm.
+	Given a T-by-N request matrix (X), accumulate the utility of the online gradient ascent caching policy.
 	"""
-	cache = OGA.construct(N)
-	state = []
+	Y = OGA.construct(N)
+	cache_distance = []
 	utility = []
 
-	# Loop over all requests in X, except last request to avoid unnecessary yet costly update of cache configuration
-	for x in X[:-1]:
+	for t in range(T):
 
-		# Store the current OGA cache configuration's Euclidean distance to BSH and calculate its utility
-		state.append(np.linalg.norm(BSH - cache))
-		utility.append(OGA.calc_utility(x, cache, W))
+		# Store the current OGA cache configuration's (Y) Euclidean distance to BSCH and calculate its utility
+		cache_distance.append(np.linalg.norm(BSCH_cache - Y))
+		utility.append(OGA.calc_utility(X[t], Y, W))
 
-		# Calculate dynamic learning rate for current request x if not provided
-		if R is None:
+		# Calculate dynamic learning rate for current request (X[t]) if not provided
+		if eta is None:
 			diam = OGA.calc_diam(N, C)
-			L = OGA.calc_L(x, W)
-			R = OGA.calc_learning_rate(diam, L, T)
+			L = OGA.calc_L(X[t], W)
+			eta = OGA.calc_learning_rate(diam, L, T)
 
-		# Update OGA cache configuration based on gradient of request and project back onto feasible solution set (constraints)
-		z = OGA.update(x, cache, W, R)
-		cache = OGA.project(z, N, C)
-
-	# Store the current OGA cache configuration and calculate the utility of the last request in X, without updating the cache configuration
-	state.append(np.linalg.norm(BSH - cache))
-	utility.append(OGA.calc_utility(X[-1], cache, W))
+		# Update OGA cache configuration (Y) based on the gradient of the current request (X[t]) and project back onto feasible solution set
+		z = OGA.update(X[t], Y, W, eta)
+		Y = OGA.project(z, N, C)
 
 	return (
 		np.asarray(utility, dtype = np.float64),
-		np.asarray(state, dtype = np.float64),
+		np.asarray(cache_distance, dtype = np.float64),
 		time.perf_counter() - start_time,
 	)
 
 
-def calc_utility_LRU (X, W, N, C, BSH, start_time = time.perf_counter()):
+def calc_utility_LRU (X, W, T, N, C, BSCH_cache, start_time = time.perf_counter()):
 	"""
-	Given a T-by-N request matrix X, accumulate the utility of the least recently used caching policy.
+	Given a T-by-N request matrix (X), accumulate the utility of the least recently used caching policy.
 	"""
-	cache = LRU.construct(C)
-	state = []
+	Y = LRU.construct(C)
+	cache_distance = []
 	utility = []
 
-	for x in X:
+	for t in range(T):
 
-		# Store the current LRU cache configuration's Euclidean distance to BSH
-		state.append(np.linalg.norm(BSH - LRU.to_vector(cache, N)))
+		# Store the current LRU cache configuration's (Y) Euclidean distance to BSCH
+		cache_distance.append(np.linalg.norm(BSCH_cache - LRU.to_vector(Y, N)))
 
-		# Update LRU cache configuration and calculate utility based on whether current request x was a cache hit or miss
-		if LRU.update(x, cache):
-			utility.append(LRU.calc_utility(x, W))
+		# Update LRU cache configuration (Y) and calculate its utility based on whether the current request (X[t]) was a cache hit or miss
+		if LRU.update(X[t], Y):
+			utility.append(LRU.calc_utility(X[t], W))
 		else:
 			utility.append(0)
 
 	return (
 		np.asarray(utility, dtype = np.float64),
-		np.asarray(state, dtype = np.float64),
+		np.asarray(cache_distance, dtype = np.float64),
 		time.perf_counter() - start_time,
 	)
 
 
-def calc_utility_EG (U, T, E, start_time = time.perf_counter()):
+def calc_utility_EG (U, T, K, start_time = time.perf_counter()):
 	"""
-	Given a T-by-E utility matrix U, accumulate the utility of the exponentiated gradient meta learner.
+	Given a T-by-K utility matrix (U), accumulate the utility of the exponentiated gradient meta learner.
 	"""
-	weights = EG.construct(E)
-	state = []
+	M = EG.construct(T + 1, K)
 	utility = []
 
-	# Calculate learning rate based on maximum utility value in U
-	learning_rate = EG.calc_learning_rate(np.max(U), T, E)
+	# Calculate the learning rate (delta) based on the maximum utility value in U
+	delta = EG.calc_learning_rate(np.max(U), T, K)
 
-	for u in U:
+	for t in range(T):
 
-		# Randomly pick an expert based on current expert advice weights
-		r = EG.select_expert(weights, E)
+		# Randomly pick a caching expert based on the current expert probability weights (M[t])
+		k = EG.select_expert(M[t], K)
 
-		# Calculate utility of selected expert
-		state.append(weights.copy())
-		utility.append(EG.calc_utility(r, u))
+		# Accumulate the achieved utility of selected caching expert k at current time slot t
+		utility.append(EG.calc_utility(k, U[t]))
 
-		# Update expert advice weights based on gradient of utility
-		weights = EG.update(u, weights, learning_rate)
+		# Calculate expert probability weights M[t + 1] based on the gradient of U[t]
+		M[t + 1] = EG.update(M[t], U[t], delta)
 
 	return (
 		np.asarray(utility, dtype = np.float64),
-		np.asarray(state, dtype = np.float64),
+		M,
 		time.perf_counter() - start_time,
 	)

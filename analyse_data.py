@@ -1,47 +1,47 @@
 import numpy as np
 
-from parameters import T, N, C, R
+from parameters import T, N, C, K
 from src import output
 
 
 if __name__ == '__main__':
 
-	# Load the generated request matrix from disk
+	# Load the generated request matrix (X) from disk
 	X = output.load_request_matrix('request_matrix')
 
-	# Load the utility progression and cache configuration state(s) of each caching policy expert from disk
-	BSH_utility, BSH_cache = output.load_results('BSH')
-	LRU_utility, LRU_caches = output.load_results('LRU')
-	OGA_utilities, OGA_caches = zip(*[output.load_results(f'OGA_[{r}]') for r in R])
+	# Load the utility progression and cache distances of each caching expert from disk
+	BSCH_utility, BSCH_cache = output.load_results('BSCH')
+	LRU_utility, LRU_cache_distance = output.load_results('LRU')
+	OGA_utilities, OGA_cache_distances = zip(*[output.load_results(f'OGA_[{k}]') for k in K])
 	EG_utility, EG_weights = output.load_results('EG')
 
-	# Sum the achieved utility over time to obtain the accumulated utility
-	BSH_utility = BSH_utility.cumsum()
+	# Sum the achieved utility over time to obtain the accumulated utility of each caching expert
+	BSCH_utility = BSCH_utility.cumsum()
 	LRU_utility = LRU_utility.cumsum()
 	OGA_utilities = np.asarray([u.cumsum() for u in OGA_utilities])
 	EG_utility = EG_utility.cumsum()
 
-	print(f'Utility accumulated by BSH policy: {BSH_utility[-1]:.2f}')
+	print(f'Utility accumulated by BSCH policy: {BSCH_utility[-1]:.2f}')
 	print(f'Utility accumulated by LRU policy: {LRU_utility[-1]:.2f}')
 
-	for i, r in enumerate(R):
-		print(f'Utility accumulated by OGA [{r}] policy: {OGA_utilities[i][-1]:.2f}')
-		print(f'Regret achieved by OGA [{r}] vs BSH: {(BSH_utility[-1] - OGA_utilities[i][-1]):.2f}')
-		print(f'Regret achieved by OGA [{r}] vs LRU: {(LRU_utility[-1] - OGA_utilities[i][-1]):.2f}')
+	for i, k in enumerate(K):
+		print(f'Utility accumulated by OGA [{k}] policy: {OGA_utilities[i][-1]:.2f}')
+		print(f'Regret achieved by OGA [{k}] vs BSCH: {(BSCH_utility[-1] - OGA_utilities[i][-1]):.2f}')
+		print(f'Regret achieved by OGA [{k}] vs LRU: {(LRU_utility[-1] - OGA_utilities[i][-1]):.2f}')
 
 	print(f'Utility accumulated by EG meta-learner: {EG_utility[-1]:.2f}')
 
-	# Plot the request distribution over the horizon T
+	# Plot the request distribution (X) over the horizon (T)
 	output.plot_request_distribution(X, T)
 
-	# Plot the Euclidean distance of each caching policy expert to the BSH cache configuration
-	output.plot_expert_distances(OGA_caches, N, C, R)
+	# Plot the Euclidean distance of each caching expert to the BSCH cache configuration
+	output.plot_expert_distances(OGA_cache_distances, N, C, K)
 
-	# Plot the utility progression of each caching policy expert
-	output.plot_expert_utilities(OGA_utilities, T, N, C, R)
+	# Plot the utility progression of each caching expert
+	output.plot_expert_utilities(OGA_utilities, T, N, C, K)
 
-	# Plot the caching policy expert weights of the meta-learner
-	output.plot_meta_learner_weights(EG_weights, R)
+	# Plot the caching expert weights progression of the meta-learner
+	output.plot_meta_learner_weights(EG_weights, N, C, K)
 
 	# Plot the utility progression of the meta-learner
 	output.plot_meta_learner_utility(EG_utility, T, N, C)

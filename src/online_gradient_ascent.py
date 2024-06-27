@@ -37,46 +37,46 @@ def calc_L (x, w):
 
 def calc_learning_rate (diam, L, T):
 	"""
-	Calculate the (possibly dynamic) learning rate.
+	Calculate the learning rate of the online gradient ascent algorithm.
 	"""
 	return diam / (L * math.sqrt(T))
 
 
 def calc_utility (x, y, w):
 	"""
-	Calculate utility of request instance (x) for cache configuration instance (y) and static file weights (w).
+	Calculate the utility of the request instance (x) for cache configuration instance (y) and static file weights (w).
 	"""
 	return np.sum(w * x * y)
 
 
 def calc_gradient (x, w):
 	"""
-	Calculate gradient of utility function with respect to cache configuration instance (y).
+	Calculate the gradient of the utility function with respect to the cache configuration instance (y).
 	"""
 	return w * x
 
 
-def update (x, y, w, learning_rate):
+def update (x, y, w, eta):
 	"""
 	Perform the gradient ascent step of the OGA algorithm - returned vector might be outside feasible solution set.
 	"""
-	return y + (learning_rate * calc_gradient(x, w))
+	return y + (eta * calc_gradient(x, w))
 
 
 def define_minimisation_problem (N, C):
 	"""
-	Instantiate global variables for minimisation problem such that they can be reused in repeated instances.
+	Instantiate global variables for the minimisation problem such that they can be reused in repeated instances.
 	"""
 	global feasible_vector, unfeasible_vector, minimisation_problem
 
-	# Define N-dimensional non-negative feasible target vector which is to be closest to the unfeasible vector
+	# Define an N-dimensional non-negative feasible target vector which is to be closest to the unfeasible vector
 	feasible_vector = cp.Variable(N, nonneg = True)
 
-	# Define mutable parameter to be used in immutable minimisation problem
+	# Define a mutable parameter to be used in the immutable minimisation problem
 	unfeasible_vector = cp.Parameter(N, nonneg = True)
 
-	# Define minimisation problem of squared Euclidean distance and constraints of the feasible solution set:
-	# A vector's elements should be in range [0 .. 1], and additionally the vector's elements should sum up to at most C.
+	# Define the minimisation problem of squared Euclidean distance and constraints of the feasible solution set:
+	# A vector's elements should be in range [0 .. 1] and the vector's elements should sum up to at most C.
 	minimisation_problem = cp.Problem(
 		cp.Minimize(cp.sum_squares(unfeasible_vector - feasible_vector)),
 		[
@@ -89,17 +89,17 @@ def define_minimisation_problem (N, C):
 # TODO: replace CVXPY abstraction with direct use of solver (?)
 def project (z, N, C):
 	"""
-	Project (unfeasible) vector (z) onto feasible solution set through minimisation of squared Euclidean distance.
+	Project the (unfeasible) vector (z) onto the feasible solution set through minimisation of squared Euclidean distance.
 	"""
 	global feasible_vector, unfeasible_vector, minimisation_problem
 
-	# Define global variables if not yet instantiated
+	# Define the global variables if not yet instantiated
 	if feasible_vector is None or unfeasible_vector is None or minimisation_problem is None:
 		define_minimisation_problem(N, C)
 
 	assert feasible_vector is not None and unfeasible_vector is not None and minimisation_problem is not None
 
-	# Update unfeasible vector parameter with current (unfeasible) vector (z)
+	# Update the unfeasible vector parameter with the current (unfeasible) vector (z)
 	unfeasible_vector.value = z
 
 	# TODO: test different canonicalisation backends (CPP, SCIPY, NUMPY)

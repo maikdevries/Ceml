@@ -3,19 +3,19 @@ import numpy as np
 
 def construct (X, W, N, C):
 	"""
-	Construct a new N-dimensional vector as BSH cache configuration.
+	Construct a new N-dimensional continuous vector as BSCH cache configuration.
 	"""
 
 	# Calculate the frequency of each file in the request matrix X
 	frequencies = np.sum(X, axis = 0)
 
-	# Calculate the utility gained in regard to the file request frequencies
+	# Calculate the utility achieved in regard to the file request frequencies
 	utilities = W * frequencies
 
 	# Retrieve the indices that would partition the array into the C highest utility-scoring files
 	indices = np.argpartition(utilities, -C)[-C:]
 
-	# Generate N-dimensional vector with the highest utility-scoring files set to 1.0 (fully cached)
+	# Generate an N-dimensional vector with the highest utility-scoring files set to 1.0 (fully cached)
 	Y = np.zeros(N, dtype = np.float64)
 	Y[indices] = 1.0
 
@@ -24,6 +24,6 @@ def construct (X, W, N, C):
 
 def calc_utility (X, Y, W):
 	"""
-	Calculate utility of request matrix (X) for cache configuration (Y) and static file weights (W).
+	Calculate the utility of request matrix (X) for cache configuration (Y) and static file weights (W).
 	"""
 	return np.sum(W * X * Y, axis = 1)

@@ -12,7 +12,7 @@ def save_request_matrix (X, file_name):
 
 def load_request_matrix (file_name):
 	"""
-	Load the request matrix from disk.
+	Load the request matrix (X) from disk.
 	"""
 	with open(f'./results/{file_name}.npy', 'rb') as f:
 		X = np.load(f)
@@ -20,28 +20,28 @@ def load_request_matrix (file_name):
 	return X
 
 
-def save_results (utility, state, file_name):
+def save_results (utility, distance, file_name):
 	"""
-	Save the utility progression and cache configuration state(s) of a caching policy to disk.
+	Save the utility progression and cache distances of a caching policy to disk.
 	"""
 	with open(f'./results/utility/{file_name}.npy', 'wb') as f:
 		np.save(f, utility)
 
-	with open(f'./results/state/{file_name}.npy', 'wb') as f:
-		np.save(f, state)
+	with open(f'./results/cache_distance/{file_name}.npy', 'wb') as f:
+		np.save(f, distance)
 
 
 def load_results (file_name):
 	"""
-	Load the utility progression and cache configuration state(s) of a caching policy from disk.
+	Load the utility progression and cache distances of a caching policy from disk.
 	"""
 	with open(f'./results/utility/{file_name}.npy', 'rb') as f:
 		utility = np.load(f)
 
-	with open(f'./results/state/{file_name}.npy', 'rb') as f:
-		state = np.load(f)
+	with open(f'./results/cache_distance/{file_name}.npy', 'rb') as f:
+		distance = np.load(f)
 
-	return (utility, state)
+	return (utility, distance)
 
 
 def plot_request_distribution (X, T):
@@ -54,34 +54,34 @@ def plot_request_distribution (X, T):
 	ax.set_ylabel('Number of requests')
 	ax.set_xlabel('File')
 
-	# Plot total number of requests per file over horizon T (request distribution)
+	# Plot the total number of requests per file over horizon T (request distribution)
 	ax.plot(np.sum(X, axis = 0))
 
 	plt.savefig('./results/plots/request_distribution.png', dpi = 300)
 	plt.show()
 
 
-def plot_expert_distances (distances, N, C, R):
+def plot_expert_distances (distances, N, C, K):
 	"""
-	Plot the Euclidean distance of each caching policy expert to the BSH cache configuration.
+	Plot the Euclidean distance of each caching expert to the BSCH cache configuration.
 	"""
 	fig, ax = plt.subplots()
-	fig.suptitle(f'Expert cache configuration distance to BSH over time\n[N = {N}, C = {C}]')
+	fig.suptitle(f'Expert cache configuration distance to BSCH over time\n[N = {N}, C = {C}]')
 
 	ax.set_ylabel('Euclidean distance')
 	ax.set_xlabel('Time slot')
 
-	for i, r in enumerate(R):
-		ax.plot(distances[i], label = f'OGA [{r}]')
+	for i, k in enumerate(K):
+		ax.plot(distances[i], label = f'OGA [{k}]')
 
 	plt.legend()
 	plt.savefig('./results/plots/expert_distances.png', dpi = 300)
 	plt.show()
 
 
-def plot_expert_utilities (utilities, T, N, C, R):
+def plot_expert_utilities (utilities, T, N, C, K):
 	"""
-	Plot the utility progression of each caching policy expert.
+	Plot the utility progression of each caching expert.
 	"""
 	fig, ax = plt.subplots()
 	fig.suptitle(f'Expert utility over time\n[N = {N}, C = {C}]')
@@ -89,29 +89,29 @@ def plot_expert_utilities (utilities, T, N, C, R):
 	ax.set_ylabel('Average utility')
 	ax.set_xlabel('Time slot')
 
-	# Generate list of time slots to be used in deriving average utility per time slot
+	# Generate list of time slots to be used in deriving the average utility per time slot
 	time_slots = np.arange(1, T + 1)
 
-	for i, r in enumerate(R):
-		ax.plot(utilities[i] / time_slots, label = f'OGA [{r}]')
+	for i, k in enumerate(K):
+		ax.plot(utilities[i] / time_slots, label = f'OGA [{k}]')
 
 	plt.legend()
 	plt.savefig('./results/plots/expert_utilities.png', dpi = 300)
 	plt.show()
 
 
-def plot_meta_learner_weights (weights, R):
+def plot_meta_learner_weights (weights, N, C, K):
 	"""
-	Plot the caching policy expert weights of the meta-learner.
+	Plot the caching expert weights progression of the meta-learner.
 	"""
 	fig, ax = plt.subplots()
-	fig.suptitle('Meta-learner expert weights over time')
+	fig.suptitle(f'Meta-learner expert weights over time\n[N = {N}, C = {C}]')
 
 	ax.set_ylabel('Expert weight')
 	ax.set_xlabel('Time slot')
 
-	for i, r in enumerate(R):
-		ax.plot(weights[:, i], label = f'OGA [{r}]')
+	for i, k in enumerate(K):
+		ax.plot(weights[:, i], label = f'OGA [{k}]')
 
 	plt.legend()
 	plt.savefig('./results/plots/meta_learner_weights.png', dpi = 300)
@@ -128,10 +128,10 @@ def plot_meta_learner_utility (utility, T, N, C):
 	ax.set_ylabel('Average utility')
 	ax.set_xlabel('Time slot')
 
-	# Generate list of time slots to be used in deriving average utility per time slot
+	# Generate list of time slots to be used in deriving the average utility per time slot
 	time_slots = np.arange(1, T + 1)
 
-	ax.plot(utility / time_slots, label = 'EG')
+	ax.plot(utility / time_slots, label = '$\\sigma^*$')
 
-	plt.savefig('./results/plots/meta_learner_utilities.png', dpi = 300)
+	plt.savefig('./results/plots/meta_learner_utility.png', dpi = 300)
 	plt.show()
