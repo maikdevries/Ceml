@@ -17,23 +17,20 @@ def calc_utility_BSCH (X, W, N, C, start_time = time.perf_counter()):
 
 	return (
 		BSCH.calc_utility(X, Y, W),
-		Y,
 		time.perf_counter() - start_time,
 	)
 
 
-def calc_utility_OGA (X, W, T, N, C, eta, BSCH_cache, start_time = time.perf_counter()):
+def calc_utility_OGA (X, W, T, N, C, eta, start_time = time.perf_counter()):
 	"""
 	Given a T-by-N request matrix (X) and utility weights matrix (W), accumulate the utility of the online gradient ascent caching policy.
 	"""
 	Y = OGA.construct(N)
-	cache_distance = []
 	utility = []
 
 	for t in range(T):
 
-		# Store the current OGA cache configuration's (Y) Euclidean distance to BSCH and calculate its utility
-		cache_distance.append(np.linalg.norm(BSCH_cache - Y))
+		# Accumulate the utility of the current request (X[t]) based on the current cache configuration (Y) and utility weights (W[t])
 		utility.append(OGA.calc_utility(X[t], Y, W[t]))
 
 		# Calculate dynamic learning rate for current request (X[t]) if not provided
@@ -48,23 +45,18 @@ def calc_utility_OGA (X, W, T, N, C, eta, BSCH_cache, start_time = time.perf_cou
 
 	return (
 		np.asarray(utility, dtype = np.float64),
-		np.asarray(cache_distance, dtype = np.float64),
 		time.perf_counter() - start_time,
 	)
 
 
-def calc_utility_LRU (X, W, T, N, C, BSCH_cache, start_time = time.perf_counter()):
+def calc_utility_LRU (X, W, T, C, start_time = time.perf_counter()):
 	"""
 	Given a T-by-N request matrix (X) and utility weights matrix (W), accumulate the utility of the least recently used caching policy.
 	"""
 	Y = LRU.construct(C)
-	cache_distance = []
 	utility = []
 
 	for t in range(T):
-
-		# Store the current LRU cache configuration's (Y) Euclidean distance to BSCH
-		cache_distance.append(np.linalg.norm(BSCH_cache - LRU.to_vector(Y, N)))
 
 		# Update LRU cache configuration (Y) and calculate its utility based on whether the current request (X[t]) was a cache hit or miss
 		if LRU.update(X[t], Y):
@@ -74,7 +66,6 @@ def calc_utility_LRU (X, W, T, N, C, BSCH_cache, start_time = time.perf_counter(
 
 	return (
 		np.asarray(utility, dtype = np.float64),
-		np.asarray(cache_distance, dtype = np.float64),
 		time.perf_counter() - start_time,
 	)
 
@@ -102,6 +93,6 @@ def calc_utility_EG (U, T, K, start_time = time.perf_counter()):
 
 	return (
 		np.asarray(utility, dtype = np.float64),
-		M,
+		M[:-1],
 		time.perf_counter() - start_time,
 	)

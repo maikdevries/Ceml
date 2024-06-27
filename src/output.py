@@ -38,28 +38,40 @@ def load_file_weights (file_name):
 	return W
 
 
-def save_results (utility, distance, file_name):
+def save_utility(utility, file_name):
 	"""
-	Save the utility progression and cache distances of a caching policy to disk.
+	Save the utility progression of a caching policy to disk.
 	"""
 	with open(f'./results/utility/{file_name}.npy', 'wb') as f:
 		np.save(f, utility)
 
-	with open(f'./results/cache_distance/{file_name}.npy', 'wb') as f:
-		np.save(f, distance)
 
-
-def load_results (file_name):
+def load_utility (file_name):
 	"""
-	Load the utility progression and cache distances of a caching policy from disk.
+	Load the utility progression of a caching policy from disk.
 	"""
 	with open(f'./results/utility/{file_name}.npy', 'rb') as f:
 		utility = np.load(f)
 
-	with open(f'./results/cache_distance/{file_name}.npy', 'rb') as f:
-		distance = np.load(f)
+	return utility
 
-	return (utility, distance)
+
+def save_weights (weights, file_name):
+	"""
+	Save the expert weights progression of the meta-learner to disk.
+	"""
+	with open(f'./results/{file_name}.npy', 'wb') as f:
+		np.save(f, weights)
+
+
+def load_weights (file_name):
+	"""
+	Load the expert weights progression of the meta-learner from disk.
+	"""
+	with open(f'./results/{file_name}.npy', 'rb') as f:
+		weights = np.load(f)
+
+	return weights
 
 
 def plot_request_distribution (X, T):
@@ -76,24 +88,6 @@ def plot_request_distribution (X, T):
 	ax.plot(np.sum(X, axis = 0))
 
 	plt.savefig('./results/plots/request_distribution.png', dpi = 300)
-	plt.show()
-
-
-def plot_expert_distances (distances, N, C, K):
-	"""
-	Plot the Euclidean distance of each caching expert to the BSCH cache configuration.
-	"""
-	fig, ax = plt.subplots()
-	fig.suptitle(f'Expert cache configuration distance to BSCH over time\n[N = {N}, C = {C}]')
-
-	ax.set_ylabel('Euclidean distance')
-	ax.set_xlabel('Time slot')
-
-	for i, k in enumerate(K):
-		ax.plot(distances[i], label = f'OGA [{k}]')
-
-	plt.legend()
-	plt.savefig('./results/plots/expert_distances.png', dpi = 300)
 	plt.show()
 
 

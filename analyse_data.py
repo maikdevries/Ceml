@@ -10,10 +10,11 @@ if __name__ == '__main__':
 	X = output.load_request_matrix('request_matrix')
 
 	# Load the utility progression and cache distances of each caching expert from disk
-	BSCH_utility, BSCH_cache = output.load_results('BSCH')
-	LRU_utility, LRU_cache_distance = output.load_results('LRU')
-	OGA_utilities, OGA_cache_distances = zip(*[output.load_results(f'OGA_[{k}]') for k in K])
-	EG_utility, EG_weights = output.load_results('EG')
+	BSCH_utility = output.load_utility('BSCH')
+	LRU_utility = output.load_utility('LRU')
+	OGA_utilities = zip(*[output.load_utility(f'OGA_[{k}]') for k in K])
+	EG_utility = output.load_utility('EG')
+	EG_weights = output.load_weights('expert_weights')
 
 	# Sum the achieved utility over time to obtain the accumulated utility of each caching expert
 	BSCH_utility = BSCH_utility.cumsum()
@@ -33,9 +34,6 @@ if __name__ == '__main__':
 
 	# Plot the request distribution (X) over the horizon (T)
 	output.plot_request_distribution(X, T)
-
-	# Plot the Euclidean distance of each caching expert to the BSCH cache configuration
-	output.plot_expert_distances(OGA_cache_distances, N, C, K)
 
 	# Plot the utility progression of each caching expert
 	output.plot_expert_utilities(OGA_utilities, T, N, C, K)
