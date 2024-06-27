@@ -28,11 +28,11 @@ def calc_diam (N, C):
 		return math.sqrt(2 * (N - C))
 
 
-def calc_L (x, w):
+def calc_L (X, W):
 	"""
 	Calculate the upper bound of the gradient of the utility function.
 	"""
-	return np.max(np.sum(w * x))
+	return np.max(np.sum(W * X, axis = 1))
 
 
 def calc_learning_rate (diam, L, T):
@@ -44,7 +44,7 @@ def calc_learning_rate (diam, L, T):
 
 def calc_utility (x, y, w):
 	"""
-	Calculate the utility of the request instance (x) for cache configuration instance (y) and static file weights (w).
+	Calculate the utility of the request instance (x) for cache configuration instance (y) and file weights (w).
 	"""
 	return np.sum(w * x * y)
 

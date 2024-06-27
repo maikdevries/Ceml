@@ -6,11 +6,8 @@ def construct (X, W, N, C):
 	Construct a new N-dimensional continuous vector as BSCH cache configuration.
 	"""
 
-	# Calculate the frequency of each file in the request matrix X
-	frequencies = np.sum(X, axis = 0)
-
-	# Calculate the utility achieved in regard to the file request frequencies
-	utilities = W * frequencies
+	# Calculate the achieved utility of each file for request matrix (X) and file weights (W)
+	utilities = np.sum(W * X, axis = 0)
 
 	# Retrieve the indices that would partition the array into the C highest utility-scoring files
 	indices = np.argpartition(utilities, -C)[-C:]

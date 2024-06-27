@@ -20,6 +20,24 @@ def load_request_matrix (file_name):
 	return X
 
 
+def save_file_weights (W, file_name):
+	"""
+	Save the file weights matrix (W) to disk.
+	"""
+	with open(f'./results/{file_name}.npy', 'wb') as f:
+		np.save(f, W)
+
+
+def load_file_weights (file_name):
+	"""
+	Load the file weights matrix (W) from disk.
+	"""
+	with open(f'./results/{file_name}.npy', 'rb') as f:
+		W = np.load(f)
+
+	return W
+
+
 def save_results (utility, distance, file_name):
 	"""
 	Save the utility progression and cache distances of a caching policy to disk.

@@ -27,6 +27,9 @@ if __name__ == '__main__':
 	# Save the generated request matrix (X) to disk
 	output.save_request_matrix(X, 'request_matrix')
 
+	# Save the generated file weights matrix (W) to disk
+	output.save_file_weights(W, 'file_weights')
+
 	# Save the utility progression and cache distances of each caching policy to disk
 	output.save_results(BSCH_utility, BSCH_cache, 'BSCH')
 	output.save_results(LRU_utility, LRU_cache_distance, 'LRU')

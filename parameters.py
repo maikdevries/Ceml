@@ -10,8 +10,8 @@ C = 250
 # T-by-N matrix: for each time slot t, a single element of vector x is set to True (file request)
 X = generate.X_zipfian(T, N, zeta = 0.8)
 
-# N-dimensional vector: static file-dependent utility vector (utility weights)
-W = generate.W_uniform(N)
+# T-by-N matrix: for each time slot t, the elements of vector w describe the utility weights (file weights)
+W = generate.W_uniform(T, N)
 
 # Distinct learning rates to be used in the online gradient ascent algorithm (caching experts)
 K = [0.05, 0.1, 0.3, 1.0]

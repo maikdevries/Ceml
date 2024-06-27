@@ -90,15 +90,15 @@ def Y_random (N, C):
 	return Y
 
 
-def W_uniform (N):
+def W_uniform (T, N):
 	"""
-	Generate an N-dimensional boolean vector with each element set to True.
+	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with each element set to True.
 	"""
-	return np.ones(N, dtype = bool)
+	return np.ones((T, N), dtype = bool)
 
 
-def W_random (N):
+def W_random (T, N):
 	"""
-	Generate an N-dimensional continuous vector with each element in range [0 .. 1).
+	Generate a T-by-N continuous matrix which contains T N-dimensional vectors with each element in range [0 .. 1).
 	"""
-	return np.random.default_rng().random(N)
+	return np.random.default_rng().random((T, N))

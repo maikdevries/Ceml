@@ -31,7 +31,7 @@ def update (x, y: deque):
 
 def calc_utility (x, w):
 	"""
-	Calculate the utility of the request instance (x) and static file weights (w) in case of a LRU cache hit.
+	Calculate the utility of the request instance (x) and file weights (w) in case of a LRU cache hit.
 	"""
 	return np.sum(w * x)
 
