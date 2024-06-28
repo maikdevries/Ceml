@@ -1,6 +1,16 @@
 import numpy as np
 
 
+def X_construct (random_indices, T, N):
+	"""
+	Construct a T-by-N zero matrix and set a random element of each vector to True.
+	"""
+	X = np.zeros((T, N), dtype = bool)
+	X[np.arange(T), random_indices] = True
+
+	return X
+
+
 def X_random (T, N):
 	"""
 	Generate a T-by-N boolean matrix which contains T N-dimensional vectors with a single random element set to True.
@@ -8,12 +18,7 @@ def X_random (T, N):
 
 	# Generate T random indices between 0 and N (exclusive)
 	random_indices = np.random.default_rng().integers(0, N, size = T)
-
-	# Generate a T-by-N zero matrix and set a random element of each vector to True
-	X = np.zeros((T, N), dtype = bool)
-	X[np.arange(T), random_indices] = True
-
-	return X
+	return X_construct(random_indices, T, N)
 
 
 def X_random_bounded (T, N, B):
@@ -24,12 +29,7 @@ def X_random_bounded (T, N, B):
 
  	# Generate T random indices between 0 and B (exclusive)
 	random_indices = np.random.default_rng().integers(0, B, size = T)
-
- 	# Generate a T-by-N zero matrix and set a random element of each vector to True
-	X = np.zeros((T, N), dtype = bool)
-	X[np.arange(T), random_indices] = True
-
-	return X
+	return X_construct(random_indices, T, N)
 
 
 def X_zipfian (T, N, zeta = 0.8):
@@ -45,12 +45,7 @@ def X_zipfian (T, N, zeta = 0.8):
 
 	# Generate T random indices between 0 and N (exclusive) according to Zipf's law
 	random_indices = np.random.default_rng().choice(N, size = T, p = probabilities)
-
-	# Generate a T-by-N zero matrix and set a random element of each vector to True
-	X = np.zeros((T, N), dtype = bool)
-	X[np.arange(T), random_indices] = True
-
-	return X
+	return X_construct(random_indices, T, N)
 
 
 def X_round_robin (T, N, B):
@@ -61,12 +56,7 @@ def X_round_robin (T, N, B):
 
 	# Generate T indices between 0 and B (exclusive) in a round-robin fashion
 	random_indices = np.arange(T) % B
-
-	# Generate a T-by-N zero matrix and set a random element of each vector to True
-	X = np.zeros((T, N), dtype = bool)
-	X[np.arange(T), random_indices] = True
-
-	return X
+	return X_construct(random_indices, T, N)
 
 
 def W_uniform (T, N):
