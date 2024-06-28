@@ -7,7 +7,7 @@ from src import benchmark, output
 if __name__ == '__main__':
 
 	# Load the utility progression of each caching expert from disk
-	OGA_utilities = [output.load_utility(f'OGA_[{k}]') for k in K]
+	OGA_utilities = [output.load_utility(f'OGA_[{k:.2f}]') for k in K]
 	OGA_utilities = np.asarray(OGA_utilities).T
 
 	# Calculate the utility progression for the meta-learner

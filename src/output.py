@@ -130,7 +130,7 @@ def plot_expert_utilities (utilities, T, N, C, K):
 	time_slots = np.arange(1, T + 1)
 
 	for i, k in enumerate(K):
-		ax.plot(utilities[i] / time_slots, label = f'OGA [{k}]')
+		ax.plot(utilities[i] / time_slots, label = f'OGA [{k:.2f}]')
 
 	# Create the output directory if it is non-existent
 	if not os.path.exists('./results/plots'):
@@ -152,7 +152,7 @@ def plot_meta_learner_weights (weights, N, C, K):
 	ax.set_xlabel('Time slot')
 
 	for i, k in enumerate(K):
-		ax.plot(weights[:, i], label = f'OGA [{k}]')
+		ax.plot(weights[:, i], label = f'OGA [{k:.2f}]')
 
 	# Create the output directory if it is non-existent
 	if not os.path.exists('./results/plots'):

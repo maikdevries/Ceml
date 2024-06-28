@@ -21,7 +21,7 @@ if __name__ == '__main__':
 	print(f'[{LRU_time:.2f}s] LRU cache policy')
 
 	for i, k in enumerate(K):
-		print(f'[{OGA_times[i]:.2f}s] OGA [{k}] cache policy')
+		print(f'[{OGA_times[i]:.2f}s] OGA [{k:.2f}] cache policy')
 
 	# Save the generated request matrix (X) to disk
 	output.save_request_matrix(X, 'request_matrix')
@@ -34,4 +34,4 @@ if __name__ == '__main__':
 	output.save_utility(LRU_utility, 'LRU')
 
 	for i, k in enumerate(K):
-		output.save_utility(OGA_utilities[i], f'OGA_[{k}]')
+		output.save_utility(OGA_utilities[i], f'OGA_[{k:.2f}]')
