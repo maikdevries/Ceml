@@ -3,96 +3,30 @@ import os
 import matplotlib.pyplot as plt
 
 
-def save_request_matrix (X, file_name):
+def save (data, file_path):
 	"""
-	Save the request matrix (X) to disk.
-	"""
-
-	# Create the output directory if it is non-existent
-	if not os.path.exists('./results'):
-		os.makedirs('./results')
-
-	with open(f'./results/{file_name}.npy', 'wb') as f:
-		np.save(f, X)
-
-
-def load_request_matrix (file_name):
-	"""
-	Load the request matrix (X) from disk.
-	"""
-	with open(f'./results/{file_name}.npy', 'rb') as f:
-		X = np.load(f)
-
-	return X
-
-
-def save_file_weights (W, file_name):
-	"""
-	Save the file weights matrix (W) to disk.
+	Save the data to disk at the specified file path.
 	"""
 
-	# Create the output directory if it is non-existent
-	if not os.path.exists('./results'):
-		os.makedirs('./results')
+	# Extract the directory path from the file path
+	directory = os.path.dirname(file_path)
 
-	with open(f'./results/{file_name}.npy', 'wb') as f:
-		np.save(f, W)
+	# Create the output directories if they are non-existent
+	if not os.path.exists(directory):
+		os.makedirs(directory)
+
+	with open(f'{file_path}.npy', 'wb') as f:
+		np.save(f, data)
 
 
-def load_file_weights (file_name):
+def load (file_path):
 	"""
-	Load the file weights matrix (W) from disk.
+	Load the data from disk at the specified file path.
 	"""
-	with open(f'./results/{file_name}.npy', 'rb') as f:
-		W = np.load(f)
+	with open(f'{file_path}.npy', 'rb') as f:
+		data = np.load(f)
 
-	return W
-
-
-def save_utility(utility, file_name):
-	"""
-	Save the utility progression of a caching policy to disk.
-	"""
-
-	# Create the output directory if it is non-existent
-	if not os.path.exists('./results/utility'):
-		os.makedirs('./results/utility')
-
-	with open(f'./results/utility/{file_name}.npy', 'wb') as f:
-		np.save(f, utility)
-
-
-def load_utility (file_name):
-	"""
-	Load the utility progression of a caching policy from disk.
-	"""
-	with open(f'./results/utility/{file_name}.npy', 'rb') as f:
-		utility = np.load(f)
-
-	return utility
-
-
-def save_weights (weights, file_name):
-	"""
-	Save the expert weights progression of the meta-learner to disk.
-	"""
-
-	# Create the output directory if it is non-existent
-	if not os.path.exists('./results'):
-		os.makedirs('./results')
-
-	with open(f'./results/{file_name}.npy', 'wb') as f:
-		np.save(f, weights)
-
-
-def load_weights (file_name):
-	"""
-	Load the expert weights progression of the meta-learner from disk.
-	"""
-	with open(f'./results/{file_name}.npy', 'rb') as f:
-		weights = np.load(f)
-
-	return weights
+	return np.asarray(data)
 
 
 def plot_request_distribution (X, T):
@@ -109,10 +43,10 @@ def plot_request_distribution (X, T):
 	ax.plot(np.sum(X, axis = 0))
 
 	# Create the output directory if it is non-existent
-	if not os.path.exists('./results/plots'):
-		os.makedirs('./results/plots')
+	if not os.path.exists('./data/plots'):
+		os.makedirs('./data/plots')
 
-	plt.savefig('./results/plots/request_distribution.png', dpi = 300)
+	plt.savefig('./data/plots/request_distribution.png', dpi = 300)
 	plt.show()
 
 
@@ -133,11 +67,11 @@ def plot_expert_utilities (utilities, T, N, C, K):
 		ax.plot(utilities[i] / time_slots, label = f'OGA [{k:.2f}]')
 
 	# Create the output directory if it is non-existent
-	if not os.path.exists('./results/plots'):
-		os.makedirs('./results/plots')
+	if not os.path.exists('./data/plots'):
+		os.makedirs('./data/plots')
 
 	plt.legend()
-	plt.savefig('./results/plots/expert_utilities.png', dpi = 300)
+	plt.savefig('./data/plots/expert_utilities.png', dpi = 300)
 	plt.show()
 
 
@@ -155,11 +89,11 @@ def plot_meta_learner_weights (weights, N, C, K):
 		ax.plot(weights[:, i], label = f'OGA [{k:.2f}]')
 
 	# Create the output directory if it is non-existent
-	if not os.path.exists('./results/plots'):
-		os.makedirs('./results/plots')
+	if not os.path.exists('./data/plots'):
+		os.makedirs('./data/plots')
 
 	plt.legend()
-	plt.savefig('./results/plots/meta_learner_weights.png', dpi = 300)
+	plt.savefig('./data/plots/meta_learner_weights.png', dpi = 300)
 	plt.show()
 
 
@@ -179,8 +113,8 @@ def plot_meta_learner_utility (utility, T, N, C):
 	ax.plot(utility / time_slots, label = '$\\sigma^*$')
 
 	# Create the output directory if it is non-existent
-	if not os.path.exists('./results/plots'):
-		os.makedirs('./results/plots')
+	if not os.path.exists('./data/plots'):
+		os.makedirs('./data/plots')
 
-	plt.savefig('./results/plots/meta_learner_utility.png', dpi = 300)
+	plt.savefig('./data/plots/meta_learner_utility.png', dpi = 300)
 	plt.show()

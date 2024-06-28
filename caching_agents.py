@@ -24,14 +24,14 @@ if __name__ == '__main__':
 		print(f'[{OGA_times[i]:.2f}s] OGA [{k:.2f}] cache policy')
 
 	# Save the generated request matrix (X) to disk
-	output.save_request_matrix(X, 'request_matrix')
+	output.save(X, './data/inputs/request_matrix')
 
 	# Save the generated file weights matrix (W) to disk
-	output.save_file_weights(W, 'file_weights')
+	output.save(W, './data/inputs/file_weights')
 
 	# Save the utility progression of each caching policy to disk
-	output.save_utility(BSCH_utility, 'BSCH')
-	output.save_utility(LRU_utility, 'LRU')
+	output.save(BSCH_utility, './data/policies/BSCH')
+	output.save(LRU_utility, './data/policies/LRU')
 
 	for i, k in enumerate(K):
-		output.save_utility(OGA_utilities[i], f'OGA_[{k:.2f}]')
+		output.save(OGA_utilities[i], f'./data/policies/OGA_[{k:.2f}]')
