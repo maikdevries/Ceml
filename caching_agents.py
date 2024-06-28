@@ -6,14 +6,13 @@ from src import benchmark, output
 
 if __name__ == '__main__':
 
-	# Calculate the utility progression for the BSCH caching policy
-	BSCH_utility, BSCH_time = benchmark.calc_utility_BSCH(X, W, N, C)
-
 	# Calculate the utility progression for various caching policies in parallel
 	with concurrent.futures.ProcessPoolExecutor() as executor:
+		BSCH_future = executor.submit(benchmark.calc_utility_BSCH, X, W, N, C)
 		LRU_future = executor.submit(benchmark.calc_utility_LRU, X, W, T, C)
 		OGA_futures = [executor.submit(benchmark.calc_utility_OGA, X, W, T, N, C, k) for k in K]
 
+		BSCH_utility, BSCH_time = BSCH_future.result()
 		LRU_utility, LRU_time = LRU_future.result()
 		OGA_utilities, OGA_times = zip(*[future.result() for future in OGA_futures])
 
