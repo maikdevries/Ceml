@@ -1,6 +1,5 @@
 import numpy as np
 import cvxpy as cp
-import math
 
 
 # Define global variables for speed-up by reusing them in repeated instances of the minimisation problem
@@ -23,9 +22,9 @@ def calc_diam (N, C):
 	boundary_condition = N / 2
 
 	if 0 < C and C <= boundary_condition:
-		return math.sqrt(2 * C)
+		return np.sqrt(2 * C)
 	elif boundary_condition < C and C <= N:
-		return math.sqrt(2 * (N - C))
+		return np.sqrt(2 * (N - C))
 
 
 def calc_L (X, W):
@@ -39,7 +38,7 @@ def calc_learning_rate (diam, L, T):
 	"""
 	Calculate the learning rate of the online gradient ascent algorithm.
 	"""
-	return diam / (L * math.sqrt(T))
+	return diam / (L * np.sqrt(T))
 
 
 def calc_utility (x, y, w):
