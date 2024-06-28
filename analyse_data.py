@@ -12,7 +12,7 @@ if __name__ == '__main__':
 	# Load the utility progression and cache distances of each caching expert from disk
 	BSCH_utility = output.load_utility('BSCH')
 	LRU_utility = output.load_utility('LRU')
-	OGA_utilities = zip(*[output.load_utility(f'OGA_[{k}]') for k in K])
+	OGA_utilities = [output.load_utility(f'OGA_[{k}]') for k in K]
 	EG_utility = output.load_utility('EG')
 	EG_weights = output.load_weights('expert_weights')
 
