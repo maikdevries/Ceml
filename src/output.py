@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 
 
@@ -6,6 +7,11 @@ def save_request_matrix (X, file_name):
 	"""
 	Save the request matrix (X) to disk.
 	"""
+
+	# Create the output directory if it is non-existent
+	if not os.path.exists('./results'):
+		os.makedirs('./results')
+
 	with open(f'./results/{file_name}.npy', 'wb') as f:
 		np.save(f, X)
 
@@ -24,6 +30,11 @@ def save_file_weights (W, file_name):
 	"""
 	Save the file weights matrix (W) to disk.
 	"""
+
+	# Create the output directory if it is non-existent
+	if not os.path.exists('./results'):
+		os.makedirs('./results')
+
 	with open(f'./results/{file_name}.npy', 'wb') as f:
 		np.save(f, W)
 
@@ -42,6 +53,11 @@ def save_utility(utility, file_name):
 	"""
 	Save the utility progression of a caching policy to disk.
 	"""
+
+	# Create the output directory if it is non-existent
+	if not os.path.exists('./results/utility'):
+		os.makedirs('./results/utility')
+
 	with open(f'./results/utility/{file_name}.npy', 'wb') as f:
 		np.save(f, utility)
 
@@ -60,6 +76,11 @@ def save_weights (weights, file_name):
 	"""
 	Save the expert weights progression of the meta-learner to disk.
 	"""
+
+	# Create the output directory if it is non-existent
+	if not os.path.exists('./results'):
+		os.makedirs('./results')
+
 	with open(f'./results/{file_name}.npy', 'wb') as f:
 		np.save(f, weights)
 
@@ -87,6 +108,10 @@ def plot_request_distribution (X, T):
 	# Plot the total number of requests per file over horizon T (request distribution)
 	ax.plot(np.sum(X, axis = 0))
 
+	# Create the output directory if it is non-existent
+	if not os.path.exists('./results/plots'):
+		os.makedirs('./results/plots')
+
 	plt.savefig('./results/plots/request_distribution.png', dpi = 300)
 	plt.show()
 
@@ -107,6 +132,10 @@ def plot_expert_utilities (utilities, T, N, C, K):
 	for i, k in enumerate(K):
 		ax.plot(utilities[i] / time_slots, label = f'OGA [{k}]')
 
+	# Create the output directory if it is non-existent
+	if not os.path.exists('./results/plots'):
+		os.makedirs('./results/plots')
+
 	plt.legend()
 	plt.savefig('./results/plots/expert_utilities.png', dpi = 300)
 	plt.show()
@@ -124,6 +153,10 @@ def plot_meta_learner_weights (weights, N, C, K):
 
 	for i, k in enumerate(K):
 		ax.plot(weights[:, i], label = f'OGA [{k}]')
+
+	# Create the output directory if it is non-existent
+	if not os.path.exists('./results/plots'):
+		os.makedirs('./results/plots')
 
 	plt.legend()
 	plt.savefig('./results/plots/meta_learner_weights.png', dpi = 300)
@@ -144,6 +177,10 @@ def plot_meta_learner_utility (utility, T, N, C):
 	time_slots = np.arange(1, T + 1)
 
 	ax.plot(utility / time_slots, label = '$\\sigma^*$')
+
+	# Create the output directory if it is non-existent
+	if not os.path.exists('./results/plots'):
+		os.makedirs('./results/plots')
 
 	plt.savefig('./results/plots/meta_learner_utility.png', dpi = 300)
 	plt.show()
